@@ -52,13 +52,15 @@ int main(int argc, char *argv[])
 	uint64_t *fileSizes = new uint64_t[nfiles];
 	uint64_t *fileOffsets = new uint64_t[nfiles];
 	uint32_t *pathOffsets = new uint32_t[nfiles];
+	uint32_t *unk1 = new uint32_t[nfiles];
+	uint64_t *fileChecksums = new uint64_t[nfiles];
 
 	for (uint64_t i = 0; i < nheaders; i++) {
 
 		// Skip unknown data (checksum ?)
-		uint32_t unk1 = read32(file);
+		unk1[i] = read32(file);
 		pathOffsets[i] = read32(file);
-		uint64_t unk2 = read64(file);
+		fileChecksums[i] = read64(file);
 
 		fileSizes[i] = read64(file);
 		file.seekg(8, std::	ios_base::cur);
@@ -93,6 +95,7 @@ int main(int argc, char *argv[])
 	// }
 
 	uint8_t *buf = NULL;
+	uint32_t bufSize = 0;
 
 	for ( i = 0; i < nfiles; i++ ) {
 
@@ -104,7 +107,10 @@ int main(int argc, char *argv[])
 
 		file.seekg( offset );
 
-		buf = (uint8_t*)realloc( buf, size );
+		if ( size > bufSize ) {
+			buf = (uint8_t*)realloc( buf, size );
+			bufSize = size;
+		}
 		file.read( (char*)buf, size );
 
 		std::string opath( pathsData + (pathOffsets[i] - pathsOffset) );
@@ -115,12 +121,32 @@ int main(int argc, char *argv[])
 		boost::system::error_code returnedError;
 
 		boost::filesystem::path path( opath );
-		std::cout << path.parent_path() << std::endl;
+		//std::cout << path.parent_path() << std::endl;
 
 		boost::filesystem::create_directories(
 			path.parent_path(), returnedError
 		);
 
+		// if ( opath == "text/b008.sab" ) {
+		// 	std::cout << "text/b008.sab detected" << std::endl;
+		// 	std::cout << std::hex << unk1[i] << std::endl;
+		// 	std::cout << std::hex << fileChecksums[i] << std::endl;
+		// }
+
+		// if ( opath == "text/b008bit.sab" ) {
+		// 	std::cout << "text/b008bit.sab detected" << std::endl;
+		// 	std::cout << std::hex << unk1[i] << std::endl;
+		// 	std::cout << std::hex << fileChecksums[i] << std::endl;
+		// }
+
+		// if ( opath == "shader/clear_f.ssf" ) {
+		// 	std::cout << "shader/clear_f.ssf detected" << std::endl;
+		// 	std::cout << "i = " << i << std::endl;
+		// 	std::cout << "offset = " << std::hex << offset << std::endl;
+		// 	std::cout << "size = " << std::hex << size << std::endl;
+		// 	std::cout << std::hex << unk1[i] << std::endl;
+		// 	std::cout << std::hex << fileChecksums[i] << std::endl;
+		// }
 
 		std::ofstream output( opath.c_str(), std::ios_base::binary );
 
