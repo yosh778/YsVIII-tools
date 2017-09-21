@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
 
 	// Version : 1.01
 	uint32_t version = read32(file);
-	uint32_t nheaders = read32(file);
-	uint32_t nfiles = read32(file);
+	uint32_t nbEntries = read32(file); // nbEntries
+	uint32_t maxEntries = read32(file); // maxEntries
 	uint32_t pathsCount = read32(file);
 	uint32_t dataOffset = read32(file);
 	uint32_t unk0 = read32(file);
@@ -49,13 +49,15 @@ int main(int argc, char *argv[])
 
 	file.seekg(0x30);
 
-	uint64_t *fileSizes = new uint64_t[nfiles];
-	uint64_t *fileOffsets = new uint64_t[nfiles];
-	uint32_t *pathOffsets = new uint32_t[nfiles];
-	uint32_t *unk1 = new uint32_t[nfiles];
-	uint64_t *fileChecksums = new uint64_t[nfiles];
+	uint64_t *fileSizes = new uint64_t[maxEntries];
+	uint64_t *fileOffsets = new uint64_t[maxEntries];
+	uint32_t *pathOffsets = new uint32_t[maxEntries];
+	uint32_t *unk1 = new uint32_t[maxEntries];
+	uint64_t *fileChecksums = new uint64_t[maxEntries];
+	uint32_t nbActualEntries = 0;
+	uint32_t i = 0;
 
-	for (uint64_t i = 0; i < nheaders; i++) {
+	for (i = 0; i < maxEntries; i++) {
 
 		// Skip unknown data (checksum ?)
 		unk1[i] = read32(file);
@@ -67,9 +69,21 @@ int main(int argc, char *argv[])
 
 		fileOffsets[i] = read64(file);
 		file.seekg(8, std::	ios_base::cur);
+
+		if ( file.tellg() >= pathsOffset ) {
+			// std::cout << "break!" << std::endl;
+			// std::cout << std::hex << file.tellg() << std::endl;
+			break;
+		}
 	}
 
-	char **fileNames = new char*[nfiles];
+	nbActualEntries = i + 1;
+
+	// std::cout << "Number of declared entries : " << maxEntries << std::endl;
+	// std::cout << "Number of actual entries   : " << nbActualEntries << std::endl;
+	// std::cout << "Number of used entries     : " << nbEntries << std::endl;
+
+	char **fileNames = new char*[maxEntries];
 
 	file.seekg(pathsOffset);
 
@@ -77,33 +91,40 @@ int main(int argc, char *argv[])
 	file.read(pathsData, pathsCount);
 
 	uint32_t n = 0;
-	uint32_t i = 0;
 	char *next = pathsData;
 	char *end = pathsData + pathsCount;
 
-	// while ( next < end ) {
+// 	while ( next < end ) {
 
-	// 	fileNames[n++] = next;
+// 		fileNames[n++] = next;
 
-	// 	// Prints file paths
-	// 	//std::cout << next << std::endl;
+// 		// Prints file paths
+// 		std::cout << next << std::endl;
+// // uint32_t jj = 0;
+// 		while ( pathsData[i++] && pathsData < end ) jj++;
+// 	// std::cout << "Skipped        : " << jj << std::endl << std::endl;
 
-	// 	while ( pathsData[i++] && pathsData < end );
+// 		// Skip null terminating byte
+// 		next = pathsData + i;
+// 	}
 
-	// 	// Skip null terminating byte
-	// 	next = pathsData + ++i;
-	// }
+// 	std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
+// 	std::cout << "Start                      : " << std::hex << pathsOffset << std::endl << std::endl;
+// 	std::cout << "Offset                     : " << std::hex << pathsOffset + i << std::dec << std::endl << std::endl;
 
 	uint8_t *buf = NULL;
 	uint32_t bufSize = 0;
+	uint32_t nFoundEntries = 0;
 
-	for ( i = 0; i < nfiles; i++ ) {
+	for ( i = 0; i < maxEntries; i++ ) {
 
 		uint32_t offset = fileOffsets[i];
 		uint32_t size = fileSizes[i];
 
 		if ( !offset || !size )
 			continue;
+
+		nFoundEntries++;
 
 		file.seekg( offset );
 
@@ -157,6 +178,14 @@ int main(int argc, char *argv[])
 		output.close();
 	}
 
+	std::cout <<
+	std::endl << "Number of declared entries      : " << maxEntries << std::endl;
+	std::cout << "Number of actual entries        : " << nbActualEntries << std::endl;
+	std::cout << "Number of used entries          : " << nbEntries << std::endl;
+	// std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
+
+	std::cout << "Declared number of used entries : " << nbEntries << std::endl;
+	std::cout << "Number of extracted entries     : " << nFoundEntries << std::endl;
 
 	return 0;
 }
