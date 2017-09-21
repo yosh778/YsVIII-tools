@@ -94,23 +94,23 @@ int main(int argc, char *argv[])
 	char *next = pathsData;
 	char *end = pathsData + pathsCount;
 
-// 	while ( next < end ) {
+	i = 0;
 
-// 		fileNames[n++] = next;
+	while ( next < end ) {
 
-// 		// Prints file paths
-// 		std::cout << next << std::endl;
-// // uint32_t jj = 0;
-// 		while ( pathsData[i++] && pathsData < end ) jj++;
-// 	// std::cout << "Skipped        : " << jj << std::endl << std::endl;
+		fileNames[n++] = next;
 
-// 		// Skip null terminating byte
-// 		next = pathsData + i;
-// 	}
+		// Prints file paths
+		// std::cout << next << std::endl;
 
-// 	std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
-// 	std::cout << "Start                      : " << std::hex << pathsOffset << std::endl << std::endl;
-// 	std::cout << "Offset                     : " << std::hex << pathsOffset + i << std::dec << std::endl << std::endl;
+		while ( pathsData[i++] && pathsData < end );
+
+		next = pathsData + i;
+	}
+
+	// std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
+	// std::cout << "Start                      : " << std::hex << pathsOffset << std::endl << std::endl;
+	// std::cout << "Offset                     : " << std::hex << pathsOffset + i << std::dec << std::endl << std::endl;
 
 	uint8_t *buf = NULL;
 	uint32_t bufSize = 0;
@@ -182,9 +182,7 @@ int main(int argc, char *argv[])
 	std::endl << "Number of declared entries      : " << maxEntries << std::endl;
 	std::cout << "Number of actual entries        : " << nbActualEntries << std::endl;
 	std::cout << "Number of used entries          : " << nbEntries << std::endl;
-	// std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
-
-	std::cout << "Declared number of used entries : " << nbEntries << std::endl;
+	std::cout << "Number of filepaths             : " << n << std::endl;
 	std::cout << "Number of extracted entries     : " << nFoundEntries << std::endl;
 
 	return 0;
