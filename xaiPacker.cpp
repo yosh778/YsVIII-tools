@@ -14,24 +14,24 @@
 using namespace boost::filesystem;
 
 void write32(std::ofstream& output, uint32_t data) {
-	output.write((char*)&data, (int)sizeof(data));
+    output.write((char*)&data, (int)sizeof(data));
 }
 
 uint64_t write64(std::ofstream& output, uint64_t data) {
-	output.write((char*)&data, (int)sizeof(data));
+    output.write((char*)&data, (int)sizeof(data));
 }
 
 int main(int argc, char *argv[])
 {
-	if ( argc < 3 ) {
-      	std::cout << "Usage : " << argv[0] << " <dataPath> <output>" << std::endl;
-		return -1;
-	}
+    if ( argc < 3 ) {
+        std::cout << "Usage : " << argv[0] << " <dataPath> <output>" << std::endl;
+        return -1;
+    }
 
-	std::cout << "WARNING : this release cannot compute valid checksums" << std::endl;
+    std::cout << "WARNING : this release cannot compute valid checksums" << std::endl;
 
-	std::string inPath = argv[1];
-	std::string output = argv[2];
+    std::string inPath = argv[1];
+    std::string output = argv[2];
 
     // Check input path existence
     if ( !exists( inPath ) ) {
@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
     }
 
     typedef struct FileData_ {
-    	std::string fullpath;
-    	std::string filename;
-    	uint64_t size;
+        std::string fullpath;
+        std::string filename;
+        uint64_t size;
     } FileData;
 
-	std::vector<FileData> files;
+    std::vector<FileData> files;
 
     recursive_directory_iterator it( inPath ), end;
     FileData fileData;
@@ -67,141 +67,141 @@ int main(int argc, char *argv[])
         continue;
 
       if ( !is_dir ) {
-      	pathsCount += filename.size() + 1;
-      	fileData.filename = filename;
-      	fileData.fullpath = fullpath;
-      	fileData.size = file_size( fullpath );
+        pathsCount += filename.size() + 1;
+        fileData.filename = filename;
+        fileData.fullpath = fullpath;
+        fileData.size = file_size( fullpath );
 
-      	files.push_back( fileData );
+        files.push_back( fileData );
       }
     }
 
-	uint32_t nbEntries = files.size();
+    uint32_t nbEntries = files.size();
 
-	std::ofstream oFile( output.c_str(), std::ios_base::binary );
+    std::ofstream oFile( output.c_str(), std::ios_base::binary );
 
-	if ( !oFile.is_open() )
-		return -2;
+    if ( !oFile.is_open() )
+        return -2;
 
-	uint32_t maxEntries = nbEntries;
-	uint32_t alignedPathsCount = ALIGN_16(pathsCount);
+    uint32_t maxEntries = nbEntries;
+    uint32_t alignedPathsCount = ALIGN_16(pathsCount);
 
-	uint32_t data;
-	uint64_t pathsOffset = 0x30 * (1 + maxEntries);
-	uint32_t dataOffset = pathsOffset + alignedPathsCount;
+    uint32_t data;
+    uint64_t pathsOffset = 0x30 * (1 + maxEntries);
+    uint32_t dataOffset = pathsOffset + alignedPathsCount;
 
-	// // XAST header
-	write32(oFile, 0x54534158);
-	write32(oFile, 0x01010000); // Version : 1.01
-	write32(oFile, nbEntries);
-	write32(oFile, nbEntries); // maxEntries
+    // // XAST header
+    write32(oFile, 0x54534158);
+    write32(oFile, 0x01010000); // Version : 1.01
+    write32(oFile, nbEntries);
+    write32(oFile, nbEntries); // maxEntries
 
-	write32(oFile, pathsCount);
-	write32(oFile, dataOffset);
+    write32(oFile, pathsCount);
+    write32(oFile, dataOffset);
 
-	uint32_t unk0 = 0; // File checksum ?
-	write32(oFile, unk0);
+    uint32_t unk0 = 0xA02A4B6A; // File checksum ?
+    write32(oFile, unk0);
 
-	uint32_t headersCount = pathsOffset - 0x30;
-	write32(oFile, headersCount);
+    uint32_t headersCount = pathsOffset - 0x30;
+    write32(oFile, headersCount);
 
-	uint64_t fileSize = -1;
-	write64(oFile, fileSize);
-	write64(oFile, 0);
+    uint64_t fileSize = -1;
+    write64(oFile, fileSize);
+    write64(oFile, 0);
 
 
-	uint64_t nextPathOffset = pathsOffset;
-	uint64_t nextFileOffset = dataOffset;
+    uint64_t nextPathOffset = pathsOffset;
+    uint64_t nextFileOffset = dataOffset;
 
-	for ( FileData file : files ) {
+    for ( FileData file : files ) {
 
-		// Entry checksum ?
-		uint32_t unk1 = 0;
-		write32(oFile, unk1);
+        // Entry checksum ?
+        uint32_t unk1 = 0x8113D6D3;
+        write32(oFile, unk1);
 
-		write32(oFile, nextPathOffset);
-		nextPathOffset += file.filename.size() + 1;
+        write32(oFile, nextPathOffset);
+        nextPathOffset += file.filename.size() + 1;
 
-		uint32_t checksum = 0;
-		write32(oFile, checksum); // File checksum ?
-		write32(oFile, 0); // Padding
+        uint32_t checksum = 0xC75EB5E1;
+        write32(oFile, checksum); // File checksum ?
+        write32(oFile, 0); // Padding
 
-		write64(oFile, file.size);
-		write64(oFile, 0); // Padding
+        write64(oFile, file.size);
+        write64(oFile, 0); // Padding
 
-		const uint64_t aSize = ALIGN_16(file.size);
-		write64(oFile, nextFileOffset);
-		write64(oFile, aSize); // Aligned file size
+        const uint64_t aSize = ALIGN_16(file.size);
+        write64(oFile, nextFileOffset);
+        write64(oFile, aSize); // Aligned file size
 
-		nextFileOffset += aSize;
-	}
+        nextFileOffset += aSize;
+    }
 
-	for ( FileData file : files ) {
-		oFile.write( file.filename.c_str(), file.filename.size() + 1 );
-	}
+    for ( FileData file : files ) {
+        oFile.write( file.filename.c_str(), file.filename.size() + 1 );
+    }
 
-	uint8_t *buf = new uint8_t[RBUF_SIZE];
+    uint8_t *buf = new uint8_t[RBUF_SIZE];
 
-	if ( oFile.tellp() % 0x10 ) {
-		memset( buf, 0, 0x10 );
-		oFile.write( (char*)buf, 0x10 - (oFile.tellp() % 0x10) );
-	}
+    if ( oFile.tellp() % 0x10 ) {
+        memset( buf, 0, 0x10 );
+        oFile.write( (char*)buf, 0x10 - (oFile.tellp() % 0x10) );
+    }
 
-	if ( oFile.tellp() != dataOffset ) {
-		std::cout << "Error while writing header" << std::endl;
-		return -2;
-	}
+    if ( oFile.tellp() != dataOffset ) {
+        std::cout << "Error while writing header" << std::endl;
+        return -2;
+    }
 
-	uint32_t n = 1;
+    uint32_t n = 1;
 
-	for ( FileData file : files ) {
+    for ( FileData file : files ) {
 
-		std::ifstream input( file.fullpath.c_str(), std::ios_base::binary );
+        std::ifstream input( file.fullpath.c_str(), std::ios_base::binary );
 
-		if ( !input.is_open() )
-			continue;
+        if ( !input.is_open() )
+            continue;
 
-		uint64_t read = 0;
-		uint64_t totalRead = 0;
+        uint64_t read = 0;
+        uint64_t totalRead = 0;
 
-		while ( input && oFile ) {
-			input.read( (char*)buf, RBUF_SIZE );
+        while ( input && oFile ) {
+            input.read( (char*)buf, RBUF_SIZE );
 
-			if ( input )
-				read = RBUF_SIZE;
+            if ( input )
+                read = RBUF_SIZE;
 
-			else
-				read = input.gcount();
+            else
+                read = input.gcount();
 
-			oFile.write( (char*)buf, read );
-			totalRead += read;
-		}
+            oFile.write( (char*)buf, read );
+            totalRead += read;
+        }
 
-		input.close();
+        input.close();
 
-		if ( totalRead != file.size ) {
-			std::cout << "Bad file size" << std::endl;
-			return -3;
-		}
+        if ( totalRead != file.size ) {
+            std::cout << "Bad file size" << std::endl;
+            return -3;
+        }
 
-		// Align for next file data if needed
-		if ( n < files.size() && oFile.tellp() % 0x10 ) {
-			memset( buf, 0, 0x10 );
-			oFile.write( (char*)buf, 0x10 - (oFile.tellp() % 0x10) );
-		}
+        // Align for next file data if needed
+        if ( n < files.size() && oFile.tellp() % 0x10 ) {
+            memset( buf, 0, 0x10 );
+            oFile.write( (char*)buf, 0x10 - (oFile.tellp() % 0x10) );
+        }
 
-		n++;
-	}
+        n++;
+    }
 
-	fileSize = oFile.tellp();
+    fileSize = oFile.tellp();
 
-	oFile.seekp(0x20);
-	write64(oFile, fileSize);
+    oFile.seekp(0x20);
+    write64(oFile, fileSize);
 
-	oFile.close();
+    oFile.close();
 
-	std::cout << "XAST archive created" << std::endl;
+    std::cout << "XAST archive created" << std::endl;
 
-	return 0;
+    return 0;
 }
 
