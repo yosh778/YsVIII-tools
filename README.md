@@ -1,3 +1,5 @@
-# XAST-Unpacker
+# XAST Unpacker + Packer
 
-Unpacker for Ys VIII assets
+Unpacker & Packer for Ys VIII assets
+
+WARNING : Packer does not compute correct checkums yet
