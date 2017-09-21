@@ -185,6 +185,8 @@ int main(int argc, char *argv[])
 	std::cout << "Number of filepaths             : " << n << std::endl;
 	std::cout << "Number of extracted entries     : " << nFoundEntries << std::endl;
 
+	file.close();
+
 	return 0;
 }
 
