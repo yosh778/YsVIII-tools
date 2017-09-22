@@ -17,4 +17,4 @@ Packs a whole folder as a XAST output archive.
 
 ## Checksums
 
-Credits to weaknespase for the checksum algorithm.
+Credits to [weaknespase](https://github.com/weaknespase) for the checksum algorithm.
