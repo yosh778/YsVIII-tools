@@ -22,13 +22,11 @@ uint64_t read64(std::ifstream& input) {
 }
 
 // Checksum reverse by weaknespase
-uint32_t checksum(const char* buf, uint32_t length, uint32_t last = 0){
-    uint32_t acc = last;
-    uint32_t i = 0;
-
-    while ( i < length )
-        acc = (33 * acc) ^ buf[i++];
-
+uint32_t checksum(const char* in, const uint32_t length, int last = 0){
+    const char* end = in + length;
+    int acc = last;
+    while (in < end)
+        acc = (acc * 33) ^ (unsigned char) *in++;
     return acc;
 }
 
@@ -187,8 +185,8 @@ int main(int argc, char *argv[])
         std::cout << "Computed file checksum : " << std::hex << contentCheck << std::dec << std::endl;
         std::cout << "Original file checksum : " << std::hex << fileChecksums[i] << std::dec << std::endl;
 
-        if ( contentCheck == fileChecksums[i] )
-            std::cout << "File checksum matched !" << std::endl;
+        if ( contentCheck != fileChecksums[i] )
+            std::cout << "File checksum error !" << std::endl;
 
 
         boost::system::error_code returnedError;

@@ -34,13 +34,11 @@ uint64_t read64(std::ifstream& input) {
 }
 
 // Checksum reverse by weaknespase
-uint32_t checksum(const char* buf, uint32_t length, uint32_t last = 0){
-    uint32_t acc = last;
-    uint32_t i = 0;
-
-    while ( i < length )
-        acc = (33 * acc) ^ buf[i++];
-
+uint32_t checksum(const char* in, const size_t length, int last = 0){
+    const char* end = in + length;
+    int acc = last;
+    while (in < end)
+        acc = (acc * 33) ^ (unsigned char) *in++;
     return acc;
 }
 
@@ -110,7 +108,7 @@ int main(int argc, char *argv[])
         return -2;
     }
 
-    uint32_t nbUnused = 12;
+    uint32_t nbUnused = 0;
     uint32_t maxEntries = nbEntries + nbUnused;
     uint32_t alignedPathsCount = ALIGN_16(pathsCount);
 
@@ -272,9 +270,9 @@ int main(int argc, char *argv[])
         write32(oFile, file.contentCheck); // File checksum
     }
 
-    oFile.seekp(0);
+    oFile.seekp(0x30);
 
-    uint32_t headerSize = 0x30 * (maxEntries + 1);
+    uint32_t headerSize = 0x30 * maxEntries;
 
     if ( RBUF_SIZE < headerSize ) {
         delete buf;
