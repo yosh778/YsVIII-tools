@@ -21,6 +21,17 @@ uint64_t read64(std::ifstream& input) {
     return data;
 }
 
+// Checksum reverse by weaknespase
+uint32_t checksum(const char* buf, uint32_t length, uint32_t last = 0){
+    uint32_t acc = last;
+    uint32_t i = 0;
+
+    while ( i < length )
+        acc = (33 * acc) ^ buf[i++];
+
+    return acc;
+}
+
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
@@ -167,6 +178,17 @@ int main(int argc, char *argv[])
         std::string base = pathsData + (pathOffsets[i] - pathsOffset);
         std::string opath( oDir + "/" + base );
         std::cout << base << std::endl;
+
+        uint32_t pathCheck = checksum( (char*)base.c_str(), base.size() );
+        std::cout << "Computed path checksum : " << std::hex << pathCheck << std::dec << std::endl;
+        std::cout << "Original path checksum : " << std::hex << unk1[i] << std::dec << std::endl;
+
+        uint32_t contentCheck = checksum( (char*)buf, size );
+        std::cout << "Computed file checksum : " << std::hex << contentCheck << std::dec << std::endl;
+        std::cout << "Original file checksum : " << std::hex << fileChecksums[i] << std::dec << std::endl;
+
+        if ( contentCheck == fileChecksums[i] )
+            std::cout << "File checksum matched !" << std::endl;
 
 
         boost::system::error_code returnedError;
