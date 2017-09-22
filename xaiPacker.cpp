@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
         fileData.filename = filename;
         fileData.fullpath = fullpath;
         fileData.pathCheck = checksum( filename.c_str(), filename.size() );
+    	// std::cout << "Checksum for " << filename << " : " << std::hex << fileData.pathCheck << std::dec << std::endl;
         fileData.size = file_size( fullpath );
 
         files.push_back( fileData );
@@ -143,7 +144,7 @@ int main(int argc, char *argv[])
     uint32_t unk1 = 0x8113D6D3;
     uint32_t tmpChecksum = 0xC75EB5E1;
 
-    for ( FileData file : files ) {
+    for ( FileData& file : files ) {
 
         // std::cout << "opening " << "xai_sums/" << file.filename << std::endl;
 
@@ -159,9 +160,10 @@ int main(int argc, char *argv[])
 
         // iSums.close();
 
+    	std::cout << "Checksum for " << file.filename << " : " << std::hex << file.pathCheck << std::dec << std::endl;
 
         // Filepath checksum
-        write32(oFile, fileData.pathCheck);
+        write32(oFile, file.pathCheck);
 
         write32(oFile, nextPathOffset);
         nextPathOffset += file.filename.size() + 1;
