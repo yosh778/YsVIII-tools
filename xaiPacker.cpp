@@ -13,11 +13,11 @@
 
 using namespace boost::filesystem;
 
-void write32(std::ofstream& output, uint32_t data) {
+void write32(std::fstream& output, uint32_t data) {
     output.write((char*)&data, (int)sizeof(data));
 }
 
-uint64_t write64(std::ofstream& output, uint64_t data) {
+uint64_t write64(std::fstream& output, uint64_t data) {
     output.write((char*)&data, (int)sizeof(data));
 }
 
@@ -33,14 +33,23 @@ uint64_t read64(std::ifstream& input) {
     return data;
 }
 
+// Checksum reverse by weaknespase
+uint32_t checksum(const char* buf, uint32_t length, uint32_t last = 0){
+    uint32_t acc = last;
+    uint32_t i = 0;
+
+    while ( i < length )
+        acc = (33 * acc) ^ buf[i++];
+
+    return acc;
+}
+
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
         std::cout << "Usage : " << argv[0] << " <dataPath> <output>" << std::endl;
         return -1;
     }
-
-    std::cout << "WARNING : this release cannot compute valid checksums" << std::endl << std::endl;
 
     std::string inPath = argv[1];
     std::string output = argv[2];
@@ -54,6 +63,8 @@ int main(int argc, char *argv[])
     typedef struct FileData_ {
         std::string fullpath;
         std::string filename;
+        uint32_t pathCheck;
+        uint32_t contentCheck;
         uint64_t size;
     } FileData;
 
@@ -82,6 +93,7 @@ int main(int argc, char *argv[])
         pathsCount += filename.size() + 1;
         fileData.filename = filename;
         fileData.fullpath = fullpath;
+        fileData.pathCheck = checksum( filename.c_str(), filename.size() );
         fileData.size = file_size( fullpath );
 
         files.push_back( fileData );
@@ -90,10 +102,12 @@ int main(int argc, char *argv[])
 
     uint32_t nbEntries = files.size();
 
-    std::ofstream oFile( output.c_str(), std::ios_base::binary );
+    std::fstream oFile( output.c_str(), std::ios_base::trunc | std::ios_base::in | std::ios_base::out | std::ios_base::binary );
 
-    if ( !oFile.is_open() )
+    if ( !oFile.is_open() ) {
+    	std::cout << "Failed to open output file '" << output << "'" << std::endl;
         return -2;
+    }
 
     uint32_t nbUnused = 12;
     uint32_t maxEntries = nbEntries + nbUnused;
@@ -127,7 +141,7 @@ int main(int argc, char *argv[])
     uint64_t nextFileOffset = dataOffset;
 
     uint32_t unk1 = 0x8113D6D3;
-    uint32_t checksum = 0xC75EB5E1;
+    uint32_t tmpChecksum = 0xC75EB5E1;
 
     for ( FileData file : files ) {
 
@@ -146,13 +160,13 @@ int main(int argc, char *argv[])
         // iSums.close();
 
 
-        // Filepath hash ?
-        write32(oFile, unk1);
+        // Filepath checksum
+        write32(oFile, fileData.pathCheck);
 
         write32(oFile, nextPathOffset);
         nextPathOffset += file.filename.size() + 1;
 
-        write32(oFile, checksum); // File checksum ?
+        write32(oFile, tmpChecksum); // File checksum
 
         bool isXast = extension(file.filename) == ".xai";
         // std::cout << extension(file.filename) << " : " << isXast << std::endl;
@@ -202,7 +216,7 @@ int main(int argc, char *argv[])
 
     uint32_t n = 0;
 
-    for ( FileData file : files ) {
+    for ( FileData& file : files ) {
 
         std::ifstream input( file.fullpath.c_str(), std::ios_base::binary );
 
@@ -211,6 +225,7 @@ int main(int argc, char *argv[])
 
         std::cout << "Writing " << file.filename << std::endl;
 
+        uint32_t last = 0;
         uint64_t read = 0;
         uint64_t totalRead = 0;
 
@@ -223,7 +238,8 @@ int main(int argc, char *argv[])
             else
                 read = input.gcount();
 
-            oFile.write( (char*)buf, read );
+            last = checksum( (const char*)buf, read, last );
+            oFile.write( (const char*)buf, read );
             totalRead += read;
         }
 
@@ -233,6 +249,8 @@ int main(int argc, char *argv[])
             std::cout << "Bad file size" << std::endl;
             return -3;
         }
+
+        file.contentCheck = last;
 
         // Align for next file data if needed
         if ( ++n < files.size() && oFile.tellp() % 0x10 ) {
@@ -245,6 +263,27 @@ int main(int argc, char *argv[])
 
     oFile.seekp(0x20);
     write64(oFile, fileSize);
+    uint32_t i = 0;
+
+    for ( FileData& file : files ) {
+        oFile.seekp((0x30 * ++i) + 8);
+        write32(oFile, file.contentCheck); // File checksum
+    }
+
+    oFile.seekp(0);
+
+    uint32_t headerSize = 0x30 * (maxEntries + 1);
+
+    if ( RBUF_SIZE < headerSize ) {
+        delete buf;
+        buf = new uint8_t[ headerSize ];
+    }
+
+    oFile.read( (char*)buf, headerSize );
+    uint32_t headerCheck = checksum( (const char*)buf, headerSize);
+
+    oFile.seekp(0x18);
+    write32(oFile, headerCheck);
 
     oFile.close();
 
