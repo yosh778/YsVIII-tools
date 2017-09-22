@@ -42,6 +42,19 @@ uint32_t checksum(const char* in, const size_t length, int last = 0){
     return acc;
 }
 
+typedef struct FileData_ {
+    std::string fullpath;
+    std::string filename;
+    uint32_t pathCheck;
+    uint32_t contentCheck;
+    uint64_t size;
+} FileData;
+
+bool alphaSorter(const FileData& a, const FileData& b)
+{
+	return a.filename < b.filename;
+}
+
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
@@ -57,14 +70,6 @@ int main(int argc, char *argv[])
       std::cout << "ERROR : Input directory " << inPath << " does not exist" << std::endl;
       return EXIT_FAILURE;
     }
-
-    typedef struct FileData_ {
-        std::string fullpath;
-        std::string filename;
-        uint32_t pathCheck;
-        uint32_t contentCheck;
-        uint64_t size;
-    } FileData;
 
     std::vector<FileData> files;
 
@@ -98,6 +103,8 @@ int main(int argc, char *argv[])
         files.push_back( fileData );
       }
     }
+
+    std::sort (files.begin(), files.end(), alphaSorter);
 
     uint32_t nbEntries = files.size();
 
@@ -141,6 +148,7 @@ int main(int argc, char *argv[])
 
     uint32_t unk1 = 0x8113D6D3;
     uint32_t tmpChecksum = 0xC75EB5E1;
+    uint32_t i = 0;
 
     for ( FileData& file : files ) {
 
@@ -176,7 +184,11 @@ int main(int argc, char *argv[])
         write64(oFile, file.size);
         write64(oFile, 0); // Padding
 
-        const uint64_t aSize = ALIGN_16(file.size);
+        uint64_t aSize = ALIGN_16(file.size);
+
+        // if ( ++i >= files.size() )
+        //     aSize = file.size;
+
         write64(oFile, nextFileOffset);
         write64(oFile, aSize); // Aligned file size
 
@@ -263,10 +275,13 @@ int main(int argc, char *argv[])
 
     oFile.seekp(0x20);
     write64(oFile, fileSize);
-    uint32_t i = 0;
+    i = 0;
 
     for ( FileData& file : files ) {
         oFile.seekp((0x30 * ++i) + 8);
+
+        // write32(oFile, file.pathCheck);
+        // write32(oFile, file.pathOffset);
         write32(oFile, file.contentCheck); // File checksum
     }
 
