@@ -15,6 +15,6 @@ Usage : `xai <folder> <output>`
 
 Packs a whole folder as a XAST output archive.
 
-# Checksums
+## Checksums
 
 Credits to weaknespase for the checksum algorithm.
