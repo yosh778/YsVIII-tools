@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include <sstream>
 #include <fstream>
 #include <cinttypes>
 #include <boost/filesystem.hpp>
@@ -22,10 +23,15 @@ uint64_t read64(std::ifstream& input) {
 
 int main(int argc, char *argv[])
 {
-    if ( argc < 2 )
+    if ( argc < 3 ) {
+        std::cout << "Usage : " << argv[0] << " <input> <output>" << std::endl;
         return -1;
+    }
 
-    std::ifstream file(argv[1], std::ios_base::binary);
+    std::string iDir = argv[1];
+    std::string oDir = argv[2];
+
+    std::ifstream file( iDir.c_str(), std::ios_base::binary );
 
     if ( !file.is_open() )
         return -2;
@@ -53,22 +59,41 @@ int main(int argc, char *argv[])
     uint64_t *fileOffsets = new uint64_t[maxEntries];
     uint32_t *pathOffsets = new uint32_t[maxEntries];
     uint32_t *unk1 = new uint32_t[maxEntries];
-    uint64_t *fileChecksums = new uint64_t[maxEntries];
+    uint32_t *fileChecksums = new uint32_t[maxEntries];
     uint32_t nbActualEntries = 0;
     uint32_t i = 0;
+    std::stringstream ss;
 
     for (i = 0; i < maxEntries; i++) {
 
-        // Skip unknown data (checksum ?)
+        // Unknown data (Filepath hash ?)
         unk1[i] = read32(file);
         pathOffsets[i] = read32(file);
-        fileChecksums[i] = read64(file);
+        fileChecksums[i] = read32(file);
+        uint32_t isXai = read32(file);
+
+        ss << std::hex << unk1[i] << " | " << pathOffsets[i]
+            << " | " << fileChecksums[i] << " | " << isXai << std::endl;
+
+        if ( isXai > 1 ) {
+            std::cout << "WARNING : unsupported value found for isXai : "
+                << isXai << std::endl;
+        }
 
         fileSizes[i] = read64(file);
-        file.seekg(8, std:: ios_base::cur);
+
+        ss << fileSizes[i] << std::endl;
+
+        if ( uint64_t padding = read64(file) ) {
+            std::cout << "WARNING : unsupported value found for padding : "
+                << padding << std::endl;
+            // return -3;
+        }
 
         fileOffsets[i] = read64(file);
-        file.seekg(8, std:: ios_base::cur);
+        uint64_t aSize = read64(file);
+
+        ss << fileOffsets[i] << " | " << aSize << std::endl << std::endl;
 
         if ( file.tellg() >= pathsOffset ) {
             // std::cout << "break!" << std::endl;
@@ -100,6 +125,8 @@ int main(int argc, char *argv[])
 
         fileNames[n++] = next;
 
+        ss << next << " | " << pathsOffset + i << std::endl;
+
         // Prints file paths
         // std::cout << next << std::endl;
 
@@ -107,6 +134,8 @@ int main(int argc, char *argv[])
 
         next = pathsData + i;
     }
+
+    // std::cout << ss.str();
 
     // std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
     // std::cout << "Start                      : " << std::hex << pathsOffset << std::endl << std::endl;
@@ -132,15 +161,15 @@ int main(int argc, char *argv[])
             buf = (uint8_t*)realloc( buf, size );
             bufSize = size;
         }
+
         file.read( (char*)buf, size );
 
-        std::string opath( pathsData + (pathOffsets[i] - pathsOffset) );
-        std::cout << opath << std::endl;
+        std::string base = pathsData + (pathOffsets[i] - pathsOffset);
+        std::string opath( oDir + "/" + base );
+        std::cout << base << std::endl;
 
 
-        boost::filesystem::path rootPath ( "./basePath/extraPath/" );
         boost::system::error_code returnedError;
-
         boost::filesystem::path path( opath );
         //std::cout << path.parent_path() << std::endl;
 
@@ -176,6 +205,23 @@ int main(int argc, char *argv[])
 
         output.write( (char*)buf, size );
         output.close();
+        
+
+        // std::string oSums = "xai_sums/" + opath;
+        // path = oSums;
+
+        // boost::filesystem::create_directories(
+        //     path.parent_path(), returnedError
+        // );
+
+        // std::ofstream oSumsFile( oSums.c_str(), std::ios_base::binary );
+
+        // if ( !oSumsFile.is_open() )
+        //     continue;
+
+        // oSumsFile.write( (char*)&unk1[i], 4 );
+        // oSumsFile.write( (char*)&fileChecksums[i], 4 );
+        // oSumsFile.close();
     }
 
     std::cout <<
