@@ -255,8 +255,10 @@ int main(int argc, char *argv[])
 
         std::ifstream input( file.fullpath.c_str(), std::ios_base::binary );
 
-        if ( !input.is_open() )
-            continue;
+        if ( !input.is_open() ) {
+            std::cout << "Failed to open " << file.fullpath << std::endl;
+            return -2;
+        }
 
         file.pathOffset = nextPathOffset;
         nextPathOffset += file.filename.size() + 1;
