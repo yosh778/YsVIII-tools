@@ -14,8 +14,11 @@ Extracts all files from an input XAST archive into the given output directory.
 Usage : `xai <folder> <output> (<original>)`
 
 Packs a whole folder as a XAST output archive.
+
 If the original .xai archive is given as third argument,
 it will use the same header structure to avoid game compatibility issues (recommanded).
+
+WARNING : When specifying the original .xai, DO NOT add new files (not supported yet).
 
 ## Checksums
 
