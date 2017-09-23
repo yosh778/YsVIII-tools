@@ -122,6 +122,11 @@ int main(int argc, char *argv[])
       }
     }
 
+    if ( argc > 3 && (headerOrder.size()-mimicUnused) != files.size() ) {
+        std::cout << "When specifying an original file, input folder must contain the same number of files & the same filepaths as the original .xai" << std::endl;
+        return -1;
+    }
+
     std::sort (files.begin(), files.end(), alphaSorter);
 
     uint32_t nbEntries = files.size();
@@ -150,7 +155,7 @@ int main(int argc, char *argv[])
     write32(oFile, pathsCount);
     write32(oFile, dataOffset);
 
-    uint32_t unk0 = 0xA02A4B6A; // File checksum ?
+    uint32_t unk0 = 0xA02A4B6A; // Headers checksum
     write32(oFile, unk0);
 
     uint32_t headersCount = pathsOffset - 0x30;

@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     uint64_t *fileSizes = new uint64_t[maxEntries];
     uint64_t *fileOffsets = new uint64_t[maxEntries];
     uint32_t *pathOffsets = new uint32_t[maxEntries];
-    uint32_t *unk1 = new uint32_t[maxEntries];
+    uint32_t *pathHash = new uint32_t[maxEntries];
     uint32_t *fileChecksums = new uint32_t[maxEntries];
     uint32_t nbActualEntries = 0;
     uint32_t i = 0;
@@ -75,13 +75,12 @@ int main(int argc, char *argv[])
 
     for (i = 0; i < maxEntries; i++) {
 
-        // Unknown data (Filepath hash ?)
-        unk1[i] = read32(file);
+        pathHash[i] = read32(file);
         pathOffsets[i] = read32(file);
         fileChecksums[i] = read32(file);
         uint32_t isXai = read32(file);
 
-        ss << std::hex << unk1[i] << " | " << pathOffsets[i]
+        ss << std::hex << pathHash[i] << " | " << pathOffsets[i]
             << " | " << fileChecksums[i] << " | " << isXai << std::endl;
 
         if ( isXai > 1 ) {
@@ -105,7 +104,7 @@ int main(int argc, char *argv[])
         ss << fileOffsets[i] << " | " << aSize << std::endl << std::endl;
 
         if ( file.tellg() >= pathsOffset ) {
-            // std::cout << "break!" << std::endl;
+            // std::cout << "break" << std::endl;
             // std::cout << std::hex << file.tellg() << std::endl;
             break;
         }
@@ -144,12 +143,6 @@ int main(int argc, char *argv[])
         next = pathsData + i;
     }
 
-    // std::cout << ss.str();
-
-    // std::cout << "Number of filepaths        : " << n << std::endl << std::endl;
-    // std::cout << "Start                      : " << std::hex << pathsOffset << std::endl << std::endl;
-    // std::cout << "Offset                     : " << std::hex << pathsOffset + i << std::dec << std::endl << std::endl;
-
     uint8_t *buf = NULL;
     uint32_t bufSize = 0;
     uint32_t nFoundEntries = 0;
@@ -179,7 +172,7 @@ int main(int argc, char *argv[])
 
         uint32_t pathCheck = checksum( (char*)base.c_str(), base.size() );
         std::cout << "Computed path checksum : " << std::hex << pathCheck << std::dec << std::endl;
-        std::cout << "Original path checksum : " << std::hex << unk1[i] << std::dec << std::endl;
+        std::cout << "Original path checksum : " << std::hex << pathHash[i] << std::dec << std::endl;
 
         uint32_t contentCheck = checksum( (char*)buf, size );
         std::cout << "Computed file checksum : " << std::hex << contentCheck << std::dec << std::endl;
@@ -197,27 +190,6 @@ int main(int argc, char *argv[])
             path.parent_path(), returnedError
         );
 
-        // if ( opath == "text/b008.sab" ) {
-        //  std::cout << "text/b008.sab detected" << std::endl;
-        //  std::cout << std::hex << unk1[i] << std::endl;
-        //  std::cout << std::hex << fileChecksums[i] << std::endl;
-        // }
-
-        // if ( opath == "text/b008bit.sab" ) {
-        //  std::cout << "text/b008bit.sab detected" << std::endl;
-        //  std::cout << std::hex << unk1[i] << std::endl;
-        //  std::cout << std::hex << fileChecksums[i] << std::endl;
-        // }
-
-        // if ( opath == "shader/clear_f.ssf" ) {
-        //  std::cout << "shader/clear_f.ssf detected" << std::endl;
-        //  std::cout << "i = " << i << std::endl;
-        //  std::cout << "offset = " << std::hex << offset << std::endl;
-        //  std::cout << "size = " << std::hex << size << std::endl;
-        //  std::cout << std::hex << unk1[i] << std::endl;
-        //  std::cout << std::hex << fileChecksums[i] << std::endl;
-        // }
-
         std::ofstream output( opath.c_str(), std::ios_base::binary );
 
         if ( !output.is_open() )
@@ -225,23 +197,6 @@ int main(int argc, char *argv[])
 
         output.write( (char*)buf, size );
         output.close();
-        
-
-        // std::string oSums = "xai_sums/" + opath;
-        // path = oSums;
-
-        // boost::filesystem::create_directories(
-        //     path.parent_path(), returnedError
-        // );
-
-        // std::ofstream oSumsFile( oSums.c_str(), std::ios_base::binary );
-
-        // if ( !oSumsFile.is_open() )
-        //     continue;
-
-        // oSumsFile.write( (char*)&unk1[i], 4 );
-        // oSumsFile.write( (char*)&fileChecksums[i], 4 );
-        // oSumsFile.close();
     }
 
     std::cout <<
