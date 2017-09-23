@@ -43,6 +43,9 @@ int main(int argc, char *argv[])
     nbEntries = read32(file); // nbEntries
     nbEntries = read32(file); // nbEntries
     nbEntries = read32(file); // nbEntries
+    uint32_t dataOffset = 0x10 + 0x20 * nbEntries;
+
+    // std::cout << "Number of declared entries      : " << nbEntries << std::endl;
 
     uint64_t *fileSizes = new uint64_t[nbEntries];
     uint64_t *fileOffsets = new uint64_t[nbEntries];
@@ -57,10 +60,19 @@ int main(int argc, char *argv[])
 	    fileNames[i] = fileName;
         std::cout << fileName << std::endl;
 
+        // std::cout << "fileoffset : 0x" << std::hex << file.tellg() << std::endl;
         fileOffsets[i] = read32(file);
         fileSizes[i] = read32(file);
+        // std::cout << "offset     : 0x" << std::hex << fileOffsets[i] << std::endl;
+        // std::cout << "size       : 0x" << std::hex << fileSizes[i] << std::endl;
 
         uint32_t padding = read64(file);
+    }
+
+    if ( file.tellg() != dataOffset ) {
+        std::cout << "Error while reading header : " << std::hex << file.tellg()
+            << " != " << dataOffset << std::dec << std::endl;
+        return -2;
     }
 
 
@@ -77,6 +89,9 @@ int main(int argc, char *argv[])
             continue;
 
         nFoundEntries++;
+        // std::cout << "Number of extracted entries     : " << std::dec << nFoundEntries << std::endl;
+        // std::cout << "offset     : 0x" << std::hex << offset << std::endl;
+        // std::cout << "size     : 0x" << std::dec << size << std::endl;
 
         file.seekg( offset );
 
@@ -101,7 +116,7 @@ int main(int argc, char *argv[])
         );
 
 
-        std::ofstream output( opath.c_str(), std::ios_base::binary );
+        std::ofstream output( opath.c_str(), std::ios_base::trunc | std::ios_base::binary );
 
         if ( !output.is_open() )
             continue;

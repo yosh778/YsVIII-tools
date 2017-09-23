@@ -144,8 +144,8 @@ int main(int argc, char *argv[])
         oFile.write( nameBuf, 0x10 );
 
 
-        write32(oFile, file.size);
         write32(oFile, nextFileOffset);
+        write32(oFile, file.size);
         write64(oFile, 0);
 
         nextFileOffset += file.size;
