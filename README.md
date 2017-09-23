@@ -11,9 +11,11 @@ Extracts all files from an input XAST archive into the given output directory.
 
 ## Packer
 
-Usage : `xai <folder> <output>`
+Usage : `xai <folder> <output> (<original>)`
 
 Packs a whole folder as a XAST output archive.
+If the original .xai archive is given as third argument,
+it will use the same header structure to avoid game compatibility issues (recommanded).
 
 ## Checksums
 
