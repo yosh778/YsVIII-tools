@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include <fstream>
+#include <unordered_map>
 #include <cinttypes>
 #include <boost/filesystem.hpp>
 
@@ -45,15 +46,22 @@ uint32_t checksum(const char* in, const size_t length, int last = 0){
 typedef struct FileData_ {
     std::string fullpath;
     std::string filename;
+    uint32_t pathOffset;
     uint32_t pathCheck;
     uint32_t contentCheck;
+    uint64_t offset;
     uint64_t size;
 } FileData;
+
+std::vector<char*> headerOrder;
 
 bool alphaSorter(const FileData& a, const FileData& b)
 {
 	return a.filename < b.filename;
 }
+
+uint32_t getHeaderOrder(std::vector<char*>& order, std::string input);
+
 
 int main(int argc, char *argv[])
 {
@@ -64,6 +72,7 @@ int main(int argc, char *argv[])
 
     std::string inPath = argv[1];
     std::string output = argv[2];
+    uint32_t mimicUnused = 0;
 
     // Check input path existence
     if ( !exists( inPath ) ) {
@@ -71,11 +80,17 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     }
 
+    if ( argc > 3 ) {
+        mimicUnused = getHeaderOrder( headerOrder, argv[3] );
+    }
+
     std::vector<FileData> files;
 
     recursive_directory_iterator it( inPath ), end;
     FileData fileData;
     uint32_t pathsCount = 0;
+    std::unordered_map<std::string, int> headerMap;
+    uint32_t i = 0;
 
     // Compress input directory recursively
     for ( ; it != end; ++it ) {
@@ -116,7 +131,7 @@ int main(int argc, char *argv[])
     }
 
     uint32_t nbUnused = 0;
-    uint32_t maxEntries = nbEntries + nbUnused;
+    uint32_t maxEntries = nbEntries + nbUnused + mimicUnused;
     uint32_t alignedPathsCount = ALIGN_16(pathsCount);
 
     uint32_t data;
@@ -142,31 +157,17 @@ int main(int argc, char *argv[])
     write64(oFile, fileSize);
     write64(oFile, 0);
 
-
     uint64_t nextPathOffset = pathsOffset;
     uint64_t nextFileOffset = dataOffset;
 
     uint32_t unk1 = 0x8113D6D3;
     uint32_t tmpChecksum = 0xC75EB5E1;
-    uint32_t i = 0;
+    i = 0;
 
+    if ( argc == 3 )
     for ( FileData& file : files ) {
 
-        // std::cout << "opening " << "xai_sums/" << file.filename << std::endl;
-
-        // std::ifstream iSums( ("xai_sums/" + file.filename).c_str(), std::ios_base::binary );
-
-        // if ( iSums.is_open() ) {
-
-        //     // Filepath hash
-        //     unk1 = read32(iSums);
-        //     checksum = read32(iSums);
-        // }
-        // else{ printf("FATAL ERROR\n"); return -11;}
-
-        // iSums.close();
-
-    	std::cout << "Checksum for " << file.filename << " : " << std::hex << file.pathCheck << std::dec << std::endl;
+        std::cout << "Checksum for " << file.filename << " : " << std::hex << file.pathCheck << std::dec << std::endl;
 
         // Filepath checksum
         write32(oFile, file.pathCheck);
@@ -195,7 +196,22 @@ int main(int argc, char *argv[])
         nextFileOffset += aSize;
     }
 
-    // Write unused entry slots
+    else
+    for ( char *filePath : headerOrder ) {
+
+        write32(oFile, -1);
+        write32(oFile, 0);
+        write32(oFile, -1);
+        write32(oFile, 0);
+
+        write64(oFile, 0);
+        write64(oFile, 0);
+
+        write64(oFile, 0);
+        write64(oFile, 0);
+    }
+
+    // Write additional unused entry slots
     for ( uint32_t i = 0; i < nbUnused; i++ ) {
 
         write32(oFile, -1);
@@ -222,11 +238,12 @@ int main(int argc, char *argv[])
     }
 
     if ( oFile.tellp() != dataOffset ) {
-        std::cout << "Error while writing header" << std::endl;
+        std::cout << "Error while writing header : " << std::hex << oFile.tellp()
+            << " != " << dataOffset << std::dec << std::endl;
         return -2;
     }
 
-    uint32_t n = 0;
+    uint32_t n = 0; i = 0;
 
     for ( FileData& file : files ) {
 
@@ -234,6 +251,17 @@ int main(int argc, char *argv[])
 
         if ( !input.is_open() )
             continue;
+
+        file.pathOffset = nextPathOffset;
+        nextPathOffset += file.filename.size() + 1;
+
+        headerMap[ file.filename ] = i++;
+
+        uint64_t aSize = ALIGN_16(file.size);
+
+        file.offset = nextFileOffset;
+
+        nextFileOffset += aSize;
 
         std::cout << "Writing " << file.filename << std::endl;
 
@@ -276,7 +304,9 @@ int main(int argc, char *argv[])
     oFile.seekp(0x20);
     write64(oFile, fileSize);
     i = 0;
+    uint32_t j = 0;
 
+    if ( argc == 3 )
     for ( FileData& file : files ) {
         oFile.seekp((0x30 * ++i) + 8);
 
@@ -284,6 +314,47 @@ int main(int argc, char *argv[])
         // write32(oFile, file.pathOffset);
         write32(oFile, file.contentCheck); // File checksum
     }
+
+    else
+    for ( char *filePath : headerOrder ) {
+        std::string hpath;
+        oFile.seekp(0x30 * (i+1));
+
+        if ( filePath && filePath != (char*)-1 ) {
+            hpath = std::string(filePath);
+            FileData& file = files[ headerMap[ hpath ] ];
+            std::cout << "Writing checksum for " << file.filename << std::endl;
+
+            write32(oFile, file.pathCheck);
+            write32(oFile, file.pathOffset);
+            write32(oFile, file.contentCheck); // File checksum
+
+            bool isXast = extension(file.filename) == ".xai";
+            // std::cout << extension(file.filename) << " : " << isXast << std::endl;
+
+            write32(oFile, isXast); // boolean : is it another XAST .xai file ?
+
+            write64(oFile, file.size);
+            write64(oFile, 0); // Padding
+
+            write64(oFile, file.offset);
+            uint32_t aSize = ALIGN_16(file.size);
+
+            if ( (file.offset + file.size) >= fileSize ) {
+                aSize = file.size;
+            }
+
+            write64(oFile, aSize); // Aligned file size
+
+            j++;
+
+            // if ( j > pFiles.size() )
+            //     return -1;
+        }
+
+        i++;
+    }
+
 
     oFile.seekp(0x30);
 
@@ -306,5 +377,86 @@ int main(int argc, char *argv[])
     std::cout << "XAST archive successfully created" << std::endl;
 
     return 0;
+}
+
+uint32_t getHeaderOrder(std::vector<char*>& order, std::string input)
+{
+    std::ifstream file( input.c_str(), std::ios_base::binary );
+
+    if ( !file.is_open() )
+        return -2;
+
+    uint32_t data;
+
+    // XAST header
+    uint32_t magic = read32(file);
+
+    // Version : 1.01
+    uint32_t version = read32(file);
+    uint32_t nbEntries = read32(file); // nbEntries
+    uint32_t maxEntries = read32(file); // maxEntries
+    uint32_t pathsCount = read32(file);
+    uint32_t dataOffset = read32(file);
+    uint32_t unk0 = read32(file);
+    uint32_t headersCount = read32(file);
+    uint32_t fileSize = read32(file);
+
+    uint32_t pathsOffset = 0x30 + headersCount;
+
+    uint64_t *fileSizes = new uint64_t[maxEntries];
+    uint64_t *fileOffsets = new uint64_t[maxEntries];
+    uint32_t *pathOffsets = new uint32_t[maxEntries];
+    uint32_t *unk1 = new uint32_t[maxEntries];
+    uint32_t *fileChecksums = new uint32_t[maxEntries];
+    uint32_t nbActualEntries = 0;
+    uint32_t i = 0;
+
+    file.seekg(pathsOffset);
+
+    char *pathsData = new char[pathsCount];
+    file.read(pathsData, pathsCount);
+
+    file.seekg(0x30);
+
+    uint32_t nbUnused = 0;
+
+    for (i = 0; i < maxEntries; i++) {
+
+        unk1[i] = read32(file);
+        pathOffsets[i] = read32(file);
+        fileChecksums[i] = read32(file);
+        uint32_t isXai = read32(file);
+
+        if ( pathOffsets[i] && pathOffsets[i] != -1 ) {
+            order.push_back( pathsData + (pathOffsets[i] - pathsOffset) );
+        // std::cout << "Detected " << ( pathsData + (pathOffsets[i] - pathsOffset) ) << file.filename << std::endl;
+
+        }
+
+        else {
+            order.push_back( (char*)-1 );
+            nbUnused++;
+        }
+
+        fileSizes[i] = read64(file);
+        uint64_t padding = read64(file);
+
+        fileOffsets[i] = read64(file);
+        uint64_t aSize = read64(file);
+
+        if ( file.tellg() >= pathsOffset ) {
+            // std::cout << "break!" << std::endl;
+            // std::cout << std::hex << file.tellg() << std::endl;
+            break;
+        }
+    }
+
+    delete fileSizes;
+    delete fileOffsets;
+    delete pathOffsets;
+    delete unk1;
+    delete fileChecksums;
+
+    return nbUnused;
 }
 
