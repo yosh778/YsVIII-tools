@@ -1,4 +1,4 @@
-# XAST Unpacker + Packer
+# XAST Unpacker / Packer tools
 
 Unpacker & Packer for Ys VIII assets
 
