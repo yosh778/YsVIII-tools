@@ -66,7 +66,7 @@ uint32_t getHeaderOrder(std::vector<char*>& order, std::string input);
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
-        std::cout << "Usage : " << argv[0] << " <dataPath> <output>" << std::endl;
+        std::cout << "Usage : " << argv[0] << " <dataPath> <outputXai> (<originalXai>)" << std::endl;
         return -1;
     }
 
@@ -82,6 +82,9 @@ int main(int argc, char *argv[])
 
     if ( argc > 3 ) {
         mimicUnused = getHeaderOrder( headerOrder, argv[3] );
+    }
+    else {
+    	std::cout << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl << std::endl;
     }
 
     std::vector<FileData> files;
@@ -160,8 +163,6 @@ int main(int argc, char *argv[])
     uint64_t nextPathOffset = pathsOffset;
     uint64_t nextFileOffset = dataOffset;
 
-    uint32_t unk1 = 0x8113D6D3;
-    uint32_t tmpChecksum = 0xC75EB5E1;
     i = 0;
 
     if ( argc == 3 )
@@ -175,7 +176,7 @@ int main(int argc, char *argv[])
         write32(oFile, nextPathOffset);
         nextPathOffset += file.filename.size() + 1;
 
-        write32(oFile, tmpChecksum); // File checksum
+        write32(oFile, 0); // File checksum
 
         bool isXast = extension(file.filename) == ".xai";
         // std::cout << extension(file.filename) << " : " << isXast << std::endl;
@@ -187,8 +188,8 @@ int main(int argc, char *argv[])
 
         uint64_t aSize = ALIGN_16(file.size);
 
-        // if ( ++i >= files.size() )
-        //     aSize = file.size;
+        if ( ++i >= files.size() )
+            aSize = file.size;
 
         write64(oFile, nextFileOffset);
         write64(oFile, aSize); // Aligned file size
@@ -304,7 +305,6 @@ int main(int argc, char *argv[])
     oFile.seekp(0x20);
     write64(oFile, fileSize);
     i = 0;
-    uint32_t j = 0;
 
     if ( argc == 3 )
     for ( FileData& file : files ) {
@@ -345,11 +345,6 @@ int main(int argc, char *argv[])
             }
 
             write64(oFile, aSize); // Aligned file size
-
-            j++;
-
-            // if ( j > pFiles.size() )
-            //     return -1;
         }
 
         i++;
@@ -372,6 +367,10 @@ int main(int argc, char *argv[])
     write32(oFile, headerCheck);
 
     oFile.close();
+
+    if ( argc == 3 ) {
+        std::cout << std::endl << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl;
+    }
 
     std::cout << std::endl << n << " files were included" << std::endl;
     std::cout << "XAST archive successfully created" << std::endl;
@@ -429,8 +428,6 @@ uint32_t getHeaderOrder(std::vector<char*>& order, std::string input)
 
         if ( pathOffsets[i] && pathOffsets[i] != -1 ) {
             order.push_back( pathsData + (pathOffsets[i] - pathsOffset) );
-        // std::cout << "Detected " << ( pathsData + (pathOffsets[i] - pathsOffset) ) << file.filename << std::endl;
-
         }
 
         else {
@@ -444,11 +441,8 @@ uint32_t getHeaderOrder(std::vector<char*>& order, std::string input)
         fileOffsets[i] = read64(file);
         uint64_t aSize = read64(file);
 
-        if ( file.tellg() >= pathsOffset ) {
-            // std::cout << "break!" << std::endl;
-            // std::cout << std::hex << file.tellg() << std::endl;
+        if ( file.tellg() >= pathsOffset )
             break;
-        }
     }
 
     delete fileSizes;
