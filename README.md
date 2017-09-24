@@ -58,4 +58,4 @@ WARNING : filenames must not be more than 15 characters, also no folder structur
 
 ## Credits
 
-Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the checksum algorithm, & Yuuna who is a big help in figuring out how to hack the assets !
+Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the checksum algorithm, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
