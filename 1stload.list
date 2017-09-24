@@ -92,7 +92,8 @@ item.tbb
 itempt.tbb
 lensfl.tbb
 lit_atxt.csv
-lit_rtxt.csv
+#lit_rtxt.csv
+# Can't move, but has english stuff
 
 manual.tbb
 map3dcon.tbb
@@ -116,4 +117,24 @@ npc.bin
 npcparam.tbb
 #opepunc.txt CRASH
 
-
+pc.tbb
+pl_const.plt
+pspbtn.itp
+quest.tbb
+record.tbb
+#rszpunc.txt
+#scr_inc.h
+#scr_punc.txt
+#se.h
+shdlist.csv
+shop2.tbb
+skill.tbb
+#status.tbb
+system01.itp
+talk.bin
+talkcam.bin
+#tips.h
+#vo.h
+voice.tbb
+vo_scene.tbb
+y8_btl.itp
