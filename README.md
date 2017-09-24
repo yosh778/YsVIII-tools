@@ -2,6 +2,24 @@
 
 Unpacking & Packing tools for Ys VIII assets
 
+
+## How to translate Ys VIII (JP) with it ?
+
+- First you need the japanese game with the 1.02 update (PCSG00881) & the dumped english assets including the 1.01 update (tested on the EUR version, PCSB01128)
+- Replace rootast.xai & patch101.xai with english ones first
+- Now, we need to fix the japanese patch102.xai with english.
+To do that, use the XAST Unpacker to extract english rootast.xai & patch101.xai & japanese patch102.xai
+- Now replace all files in patch102.xai with their english version in patch101.xai, or rootast.xai if not in 1.01, except flash/pkg_menu.xai & system/1stload.dat which must not change
+- Then, we must patch the japanese system/1stload.dat
+- First use the DAT Unpacker to extract both japanese / english system/1stload.dat files
+- Now use the `swap.sh` bash script on `1stload.list` and english then japanese directories created in last step.
+Something like `./swap.sh 1stload.list 1stload_eng/ 1stload_jap/`, otherwise you can just replace each non-commented file in `1stload.list` with its english version (`swap.sh` does that)
+- Finally, repack the fixed 1stload.dat file using the `dat` tool, use it as system/1stload.dat in 102 & then repack 102 using the XAST Packer.
+Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
+- Finished, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
+
+
+
 ## XAST
 ### Unpacker
 
