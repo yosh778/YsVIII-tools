@@ -25,9 +25,9 @@ fishhazu.tbb
 fish.tbb
 #flag.h OK
 font.itf
-inccc2.scp
-inccc3.scp
-inccc.scp
+#inccc2.scp
+#inccc3.scp
+#inccc.scp
 invtable.tbb
 item.bin
 itempt.tbb
