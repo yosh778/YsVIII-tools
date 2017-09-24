@@ -1,70 +1,18 @@
+3dicon.h
 3dicon.tbb
 actev.tbb
-balance.tbb
-bgmtbl.tbb
-diary.tbb
-drchara.tbb
-equip.tbb
-fisharea.tbb
-fishchar.tbb
-fishchr2.tbb
-fishhazu.tbb
-invtable.tbb
-item.bin
-itempt.tbb
-item.tbb
-lensfl.tbb
-manual.tbb
-map3dcon.tbb
-mapainfo.tlb
-mapcoop.tbb
-mapevent.tbb
-mapmmsr.dat
-mapmstbl.tbb
-mapname.tbb
-mapopen.tbb
-maprange.tbb
-mapwarp.tbb
-minimap.tbb
-mixitem2.tbb
-monslib.tbb
-npc.bin
-npcparam.tbb
-pc.tbb
-quest.tbb
-record.tbb
-setbl.tbb
-shop2.tbb
-skill.tbb
-soundefx.tbb
-system.bin
-talk.bin
-talkcam.bin
-tips.tbb
-voice.tbb
-vo_scene.tbb
-
-3dicon.tbb
-3dicon.h
-
 #argpunc.txt <= CRASH
-
 ascii2l.itp
 balance.tbb
-
 c000.mtb
 c001.mtb
 c002.mtb
 c003.mtb
 c004.mtb
 c005.mtb
-
 def.h
-
 diary.tbb
 drchara.tbb
-ef_a_16.itp
-
 efxlist.txt
 enum_al.h
 enum_rl.h
@@ -72,37 +20,26 @@ equip.tbb
 fisharea.tbb
 fishchar.tbb
 fishchr2.tbb
-
 fish.h
 fishhazu.tbb
 fish.tbb
-fishui.itp
 flag.h
 font.itf
-if_win.itp
-if_win.itp
 inccc2.scp
 inccc3.scp
 inccc.scp
 invtable.tbb
 item.bin
-item.tbb
-
-
 itempt.tbb
+item.tbb
 lensfl.tbb
 lit_atxt.csv
-#lit_rtxt.csv
-# Can't move, but has english stuff
-
+#lit_rtxt.csv BUG : Can't move, but has english stuff
 manual.tbb
 map3dcon.tbb
 mapainfo.tlb
 mapcoop.tbb
 mapevent.tbb
-
-
-map_icon.itp
 mapmstbl.tbb
 mapname.tbb
 mapopen.tbb
@@ -110,31 +47,33 @@ maprange.tbb
 mapwarp.tbb
 minimap.tbb
 mixitem2.tbb
-#mons.h CRASH
+#mons.h	CRASH
 monslib.tbb
 monspunc.txt
+#mtdpunc.txt	TODO : TEST
 npc.bin
 npcparam.tbb
 #opepunc.txt CRASH
-
 pc.tbb
 pl_const.plt
-pspbtn.itp
 quest.tbb
 record.tbb
-#rszpunc.txt
-#scr_inc.h
-#scr_punc.txt
-#se.h
+#rszpunc.txt	TODO : TEST
+#scr_inc.h	TODO : TEST
+#scr_punc.txt	TODO : TEST
+#se.h	TODO : TEST
 shdlist.csv
 shop2.tbb
+#skilldef.h	TODO : TEST
 skill.tbb
-#status.tbb
+soundefx.tbb
+#status.tbb	BUG : Can't move
 system01.itp
 talk.bin
 talkcam.bin
-#tips.h
-#vo.h
+#tips.h	TODO : TEST
+tips.tbb
+#vo.h	TODO : TEST
 voice.tbb
 vo_scene.tbb
 y8_btl.itp
