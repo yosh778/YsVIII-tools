@@ -26,6 +26,9 @@ rm $DAT_FIX_DIR/*
 cp -f custom/lit_rtxt.csv $DAT_FIX_DIR
 cp -f custom/lit_rtxt.csv $PATCH_102_FIX_DIR/system/lit_rtxt.csv
 
+cp -f custom/pl_const.plt $DAT_FIX_DIR
+cp -f custom/pl_const.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
+
 ./dat $DAT_FIX_DIR $DAT_OUT
 cp -f $DAT_OUT $PATCH_102_FIX_DIR/system/1stload.dat
 

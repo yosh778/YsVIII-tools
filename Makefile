@@ -1,5 +1,5 @@
 
-all: xai unxai dat undat
+all: xai unxai dat undat unplt
 
 xai: xai.cpp
 	g++ -o xai xai.cpp -lboost_system -lboost_filesystem -std=c++11 #-g
@@ -13,6 +13,13 @@ dat: dat.cpp
 undat: undat.cpp
 	g++ -o undat undat.cpp -lboost_system -lboost_filesystem -std=c++11 #-g
 
+plt: plt.cpp
+	g++ -o plt plt.cpp -lboost_system -lboost_filesystem -std=c++11 #-g
+
+unplt: unplt.cpp
+	g++ -o unplt unplt.cpp -lboost_system -lboost_filesystem -std=c++11 #-g
+
 clean:
 	rm unxai xai
 	rm undat dat
+	rm unplt plt
