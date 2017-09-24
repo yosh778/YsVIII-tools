@@ -8,6 +8,7 @@ PATCH_102_FIX_DIR=patch102_fix
 PATCH_102_REAL=patch102_real.xai
 PATCH_102_OUT=patch102_fix.xai
 
+DAT_JP=1stload_jp.dat
 DAT_FIX_DIR=1stload_fix
 DAT_OUT=1stload_fix.dat
 
@@ -18,6 +19,8 @@ DAT_ENG_DIR=1stload_allEng
 ./xai $PKG_MENU_FIX_DIR $PKG_MENU_OUT $PKG_MENU_JP_XAI
 cp -f $PKG_MENU_OUT $PATCH_102_FIX_DIR/flash/pkg_menu.xai
 
+rm $DAT_FIX_DIR/*
+./undat $DAT_JP $DAT_FIX_DIR
 ./swap.sh $DAT_LIST $DAT_ENG_DIR $DAT_FIX_DIR
 
 ./dat $DAT_FIX_DIR $DAT_OUT
