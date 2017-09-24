@@ -39,10 +39,6 @@ it will use the same header structure to avoid game compatibility issues (recomm
 
 WARNING : When specifying the original .xai, DO NOT add new files (not supported yet).
 
-### Checksums
-
-Credits to [weaknespase](https://github.com/weaknespase) for the checksum algorithm.
-
 
 ## DAT
 ### Unpacker
@@ -59,3 +55,7 @@ Usage : `dat <folder> <output>`
 Packs a whole folder as a DAT output archive.
 
 WARNING : filenames must not be more than 15 characters, also no folder structure should be used in theory.
+
+## Credits
+
+Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the checksum algorithm, & Yuuna who is a big help in figuring out which assets to replace !
