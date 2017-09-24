@@ -43,3 +43,24 @@ talkcam.bin
 tips.tbb
 voice.tbb
 vo_scene.tbb
+
+3dicon.tbb
+3dicon.h
+
+#argpunc.txt <= CRASH
+
+ascii2l.itp
+balance.tbb
+
+c000.mtb
+c001.mtb
+c002.mtb
+c003.mtb
+c004.mtb
+c005.mtb
+
+def.h
+
+diary.tbb
+drchara.tbb
+ef_a_16.itp
