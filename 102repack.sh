@@ -23,6 +23,9 @@ rm $DAT_FIX_DIR/*
 ./undat $DAT_JP $DAT_FIX_DIR
 ./swap.sh $DAT_LIST $DAT_ENG_DIR $DAT_FIX_DIR
 
+cp -f custom/lit_rtxt.csv $DAT_FIX_DIR
+cp -f custom/lit_rtxt.csv $PATCH_102_FIX_DIR/system/lit_rtxt.csv
+
 ./dat $DAT_FIX_DIR $DAT_OUT
 cp -f $DAT_OUT $PATCH_102_FIX_DIR/system/1stload.dat
 

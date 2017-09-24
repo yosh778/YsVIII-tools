@@ -1,4 +1,4 @@
-3dicon.h
+#3dicon.h OK
 3dicon.tbb
 actev.tbb
 #argpunc.txt <= CRASH
@@ -10,20 +10,20 @@ c002.mtb
 c003.mtb
 c004.mtb
 c005.mtb
-def.h
+#def.h OK
 diary.tbb
 drchara.tbb
-efxlist.txt
-enum_al.h
-enum_rl.h
+#efxlist.txt OK
+#enum_al.h OK
+#enum_rl.h OK
 equip.tbb
 fisharea.tbb
 fishchar.tbb
 fishchr2.tbb
-fish.h
+#fish.h OK
 fishhazu.tbb
 fish.tbb
-flag.h
+#flag.h OK
 font.itf
 inccc2.scp
 inccc3.scp
@@ -49,7 +49,7 @@ minimap.tbb
 mixitem2.tbb
 #mons.h	CRASH
 monslib.tbb
-monspunc.txt
+#monspunc.txt OK
 #mtdpunc.txt	TODO : TEST
 npc.bin
 npcparam.tbb
