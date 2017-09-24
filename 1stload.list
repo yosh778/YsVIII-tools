@@ -1,8 +1,3 @@
-item.bin
-npc.bin
-system.bin
-talk.bin
-talkcam.bin
 3dicon.tbb
 actev.tbb
 balance.tbb
@@ -15,8 +10,9 @@ fishchar.tbb
 fishchr2.tbb
 fishhazu.tbb
 invtable.tbb
-item.tbb
+item.bin
 itempt.tbb
+item.tbb
 lensfl.tbb
 manual.tbb
 map3dcon.tbb
@@ -32,6 +28,7 @@ mapwarp.tbb
 minimap.tbb
 mixitem2.tbb
 monslib.tbb
+npc.bin
 npcparam.tbb
 pc.tbb
 quest.tbb
@@ -40,6 +37,9 @@ setbl.tbb
 shop2.tbb
 skill.tbb
 soundefx.tbb
+system.bin
+talk.bin
+talkcam.bin
 tips.tbb
-vo_scene.tbb
 voice.tbb
+vo_scene.tbb
