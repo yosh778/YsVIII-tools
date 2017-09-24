@@ -17,6 +17,9 @@ output=$3
 
 while IFS='' read -r filename || [[ -n "$filename" ]]; do
 
+	[[ "$filename" =~ ^#.*$ ]] && continue
+	[[ -z "$filename" ]] && continue
+
     echo "Copying $filename from $input to $output"
     cp -f "$input"/"$filename" "$output"/"$filename"
 
