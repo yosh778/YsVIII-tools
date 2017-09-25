@@ -77,13 +77,22 @@ Usage : `unplt <input> <output>`
 
 Extracts all strings from an input PLT archive into the given output text file.
 
+## TBB
+### Unpacking
+
+Usage : `node tbbconv.js unpack <inputTBB> <outputCSV>`
+
+Converts a TBB input file into a CSV output file.
+
 
 ### Packer
 
-Usage : `plt <input> <output>`
+Usage : `node tbbconv.js pack <inputCSV> <outputTBB> (--enc shift-jis)`
 
-Packs a text PLT into a binary PLT output archive.
+Converts a CSV input file into a TBB output file.
+
+Add the `--enc shift-jis` argument to repack a into shift-jis (CSV is unicode)
 
 ## Credits
 
-Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the checksum algorithm, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
+Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the XAST checksum + TBB tools, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
