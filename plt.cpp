@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     input.close();
     oFile.close();
 
-    std::cout << std::endl << nbEntries << " files were included" << std::endl;
+    std::cout << nbEntries << " files were included" << std::endl;
     std::cout << "PLT archive successfully created" << std::endl;
 
     return 0;
