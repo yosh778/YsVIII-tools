@@ -14,7 +14,7 @@ To do that, use the XAST Unpacker to extract english rootast.xai & patch101.xai 
 - First use the DAT Unpacker to extract both japanese / english system/1stload.dat files
 - Now use the `swap.sh` bash script on `1stload.list` and english then japanese directories created in last step.
 Something like `./swap.sh 1stload.list 1stload_eng/ 1stload_jap/`, otherwise you can just replace each non-commented file in `1stload.list` with its english version (`swap.sh` does that)
-- Some files from 1stload.dat like pl_const.plt & lit_rtxt.csv require manual hacking, mostly encoding fixes.
+- Some files from 1stload.dat like pl_const.plt & lit_rtxt.csv require manual hacking to work correctly, mostly encoding fixes.
 I will not post them here but you can always look for them elsewhere
 - Finally, repack the fixed 1stload.dat file using the `dat` tool, use it as system/1stload.dat in 102 & then repack 102 using the XAST Packer.
 Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
