@@ -75,7 +75,7 @@ Extracts all strings from an input PLT archive into the given output text file.
 
 ### Packer
 
-Usage : `plt <folder> <output>`
+Usage : `plt <input> <output>`
 
 Packs a text PLT into a binary PLT output archive.
 
