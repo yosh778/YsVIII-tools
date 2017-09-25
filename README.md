@@ -26,7 +26,9 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Fix status.tbb in 1stload.dat to translate monster names
 - Fix pl_const.plt hacking, latest still has some tiny issues
 - Fix any leftover bug with lit_rtxt.csv (nothing new yet)
-- Find out why flash/pkg_menu.xai cannot be modded without crashing the menu & translate it if needed
+- Find out if any file .rsb in flash/pkg_menu.xai needs translation & how to fix .rsb files if needed
+- Swap game title & other main resources like manual
+- Translate trophies if doable
 
 
 ## XAST
