@@ -1,4 +1,4 @@
-# XAST & DAT Unpacking / Packing tools
+# Ys VIII Unpacking / Packing tools
 
 Unpacking & Packing tools for Ys VIII assets
 
