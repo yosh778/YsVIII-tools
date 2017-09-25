@@ -35,6 +35,9 @@ cp -f custom/lit_rtxt.csv $PATCH_102_FIX_DIR/system/lit_rtxt.csv
 cp -f custom/pl_const.plt $DAT_FIX_DIR
 cp -f custom/pl_const.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
 
+node tbbconv/tbbconv.js unpack $DAT_ENG_DIR/status.tbb tmp
+node tbbconv/tbbconv.js pack tmp $DAT_FIX_DIR/status.tbb --enc shift-jis
+
 ./dat $DAT_FIX_DIR $DAT_OUT > /dev/null
 cp -f $DAT_OUT $PATCH_102_FIX_DIR/system/1stload.dat
 
