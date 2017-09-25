@@ -53,7 +53,7 @@ uint32_t getHeaderOrder(std::vector<char*>& order, std::string input);
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
-        std::cout << "Usage : " << argv[0] << " <dataPath> <outputDat>" << std::endl;
+        std::cerr << "Usage : " << argv[0] << " <dataPath> <outputDat>" << std::endl;
         return -1;
     }
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
     // Check input path existence
     if ( !exists( inPath ) ) {
-      std::cout << "ERROR : Input directory " << inPath << " does not exist" << std::endl;
+      std::cerr << "ERROR : Input directory " << inPath << " does not exist" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     std::fstream oFile( output.c_str(), std::ios_base::trunc | std::ios_base::in | std::ios_base::out | std::ios_base::binary );
 
     if ( !oFile.is_open() ) {
-    	std::cout << "Failed to open output file '" << output << "'" << std::endl;
+    	std::cerr << "Failed to open output file '" << output << "'" << std::endl;
         return -2;
     }
 
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
     uint8_t *buf = new uint8_t[RBUF_SIZE];
 
     if ( oFile.tellp() != dataOffset ) {
-        std::cout << "Error while writing header : " << std::hex << oFile.tellp()
+        std::cerr << "Error while writing header : " << std::hex << oFile.tellp()
             << " != " << dataOffset << std::dec << std::endl;
         return -2;
     }
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
         std::ifstream input( file.fullpath.c_str(), std::ios_base::binary );
 
         if ( !input.is_open() ) {
-	        std::cout << "Failed to open " << file.fullpath << std::endl;
+	        std::cerr << "Failed to open " << file.fullpath << std::endl;
 	        return -2;
         }
 
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
         input.close();
 
         if ( totalRead != file.size ) {
-            std::cout << "Bad file size for " << file.fullpath << std::endl;
+            std::cerr << "Bad file size for " << file.fullpath << std::endl;
             return -3;
         }
 
@@ -204,8 +204,8 @@ int main(int argc, char *argv[])
     //     std::cout << std::endl << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl;
     // }
 
-    std::cout << std::endl << n << " files were included" << std::endl;
-    std::cout << "DAT archive successfully created" << std::endl;
+    std::cerr << std::endl << n << " files were included" << std::endl;
+    std::cerr << "DAT archive successfully created" << std::endl;
 
     return 0;
 }

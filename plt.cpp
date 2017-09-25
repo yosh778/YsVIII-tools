@@ -37,7 +37,7 @@ uint64_t read64(std::ifstream& input) {
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
-        std::cout << "Usage : " << argv[0] << " <input> <outputData>" << std::endl;
+        std::cerr << "Usage : " << argv[0] << " <input> <outputData>" << std::endl;
         return -1;
     }
 
@@ -51,14 +51,14 @@ int main(int argc, char *argv[])
     std::ifstream input( inPath.c_str() );
 
     if ( !input.is_open() ) {
-        std::cout << "Failed to open " << inPath << std::endl;
+        std::cerr << "Failed to open " << inPath << std::endl;
         return -2;
     }
 
     std::fstream oFile( output.c_str(), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary );
 
     if ( !oFile.is_open() ) {
-    	std::cout << "Failed to open output file '" << output << "'" << std::endl;
+    	std::cerr << "Failed to open output file '" << output << "'" << std::endl;
         return -2;
     }
 
@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
 
         oFile.write( nameBuf, sizeof(nameBuf) );
 
+        std::cerr << "Writing " << nameBuf << std::endl;
+
         getline( input, line );
         write16(oFile, line.size() );
         oFile.write( line.c_str(), line.size() );
@@ -87,8 +89,8 @@ int main(int argc, char *argv[])
     input.close();
     oFile.close();
 
-    std::cout << nbEntries << " files were included" << std::endl;
-    std::cout << "PLT archive successfully created" << std::endl;
+    std::cerr << nbEntries << " files were included" << std::endl;
+    std::cerr << "PLT archive successfully created" << std::endl;
 
     return 0;
 }

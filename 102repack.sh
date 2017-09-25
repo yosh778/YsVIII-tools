@@ -1,8 +1,10 @@
 #!/bin/bash
 
+PKG_MENU_ENG_DIR=pkg_menu_eng
 PKG_MENU_FIX_DIR=pkg_menu_fix
 PKG_MENU_JP_XAI=pkg_menu_jp.xai
 PKG_MENU_OUT=pkg_menu_fix.xai
+PKG_MENU_LIST=pkg_menu.list
 
 PATCH_102_FIX_DIR=patch102_fix
 PATCH_102_REAL=patch102_real.xai
@@ -16,12 +18,16 @@ DAT_LIST=1stload.list
 DAT_ENG_DIR=1stload_allEng
 
 
-./xai $PKG_MENU_FIX_DIR $PKG_MENU_OUT $PKG_MENU_JP_XAI
+rm $PKG_MENU_FIX_DIR/*
+./unxai $PKG_MENU_JP_XAI $PKG_MENU_FIX_DIR > /dev/null
+./swap.sh $PKG_MENU_LIST $PKG_MENU_ENG_DIR $PKG_MENU_FIX_DIR > /dev/null
+
+./xai $PKG_MENU_FIX_DIR $PKG_MENU_OUT $PKG_MENU_JP_XAI > /dev/null
 cp -f $PKG_MENU_OUT $PATCH_102_FIX_DIR/flash/pkg_menu.xai
 
 rm $DAT_FIX_DIR/*
-./undat $DAT_JP $DAT_FIX_DIR
-./swap.sh $DAT_LIST $DAT_ENG_DIR $DAT_FIX_DIR
+./undat $DAT_JP $DAT_FIX_DIR > /dev/null
+./swap.sh $DAT_LIST $DAT_ENG_DIR $DAT_FIX_DIR > /dev/null
 
 cp -f custom/lit_rtxt.csv $DAT_FIX_DIR
 cp -f custom/lit_rtxt.csv $PATCH_102_FIX_DIR/system/lit_rtxt.csv
@@ -29,10 +35,10 @@ cp -f custom/lit_rtxt.csv $PATCH_102_FIX_DIR/system/lit_rtxt.csv
 cp -f custom/pl_const.plt $DAT_FIX_DIR
 cp -f custom/pl_const.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
 
-./dat $DAT_FIX_DIR $DAT_OUT
+./dat $DAT_FIX_DIR $DAT_OUT > /dev/null
 cp -f $DAT_OUT $PATCH_102_FIX_DIR/system/1stload.dat
 
-./xai $PATCH_102_FIX_DIR $PATCH_102_OUT $PATCH_102_REAL
+./xai $PATCH_102_FIX_DIR $PATCH_102_OUT $PATCH_102_REAL > /dev/null
 cp -f $PATCH_102_OUT patch102.xai
 
 # Some checks

@@ -66,7 +66,7 @@ uint32_t getHeaderOrder(std::vector<char*>& order, std::string input);
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
-        std::cout << "Usage : " << argv[0] << " <dataPath> <outputXai> (<originalXai>)" << std::endl;
+        std::cerr << "Usage : " << argv[0] << " <dataPath> <outputXai> (<originalXai>)" << std::endl;
         return -1;
     }
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
     // Check input path existence
     if ( !exists( inPath ) ) {
-      std::cout << "ERROR : Input directory " << inPath << " does not exist" << std::endl;
+      std::cerr << "ERROR : Input directory " << inPath << " does not exist" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         mimicUnused = getHeaderOrder( headerOrder, argv[3] );
     }
     else {
-    	std::cout << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl << std::endl;
+    	std::cerr << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl << std::endl;
     }
 
     std::vector<FileData> files;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     }
 
     if ( argc > 3 && (headerOrder.size()-mimicUnused) != files.size() ) {
-        std::cout << "When specifying an original file, input folder must contain the same number of files & the same filepaths as the original .xai" << std::endl;
+        std::cerr << "When specifying an original file, input folder must contain the same number of files & the same filepaths as the original .xai" << std::endl;
         return -1;
     }
 
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
     std::fstream oFile( output.c_str(), std::ios_base::trunc | std::ios_base::in | std::ios_base::out | std::ios_base::binary );
 
     if ( !oFile.is_open() ) {
-    	std::cout << "Failed to open output file '" << output << "'" << std::endl;
+    	std::cerr << "Failed to open output file '" << output << "'" << std::endl;
         return -2;
     }
 
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
     }
 
     if ( oFile.tellp() != dataOffset ) {
-        std::cout << "Error while writing header : " << std::hex << oFile.tellp()
+        std::cerr << "Error while writing header : " << std::hex << oFile.tellp()
             << " != " << dataOffset << std::dec << std::endl;
         return -2;
     }
@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
         std::ifstream input( file.fullpath.c_str(), std::ios_base::binary );
 
         if ( !input.is_open() ) {
-            std::cout << "Failed to open " << file.fullpath << std::endl;
+            std::cerr << "Failed to open " << file.fullpath << std::endl;
             return -2;
         }
 
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
         input.close();
 
         if ( totalRead != file.size ) {
-            std::cout << "Bad file size" << std::endl;
+            std::cerr << "Bad file size" << std::endl;
             return -3;
         }
 
@@ -376,11 +376,11 @@ int main(int argc, char *argv[])
     oFile.close();
 
     if ( argc == 3 ) {
-        std::cout << std::endl << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl;
+        std::cerr << std::endl << "WARNING : No original XAST archive specified, this could cause game crashes" << std::endl;
     }
 
-    std::cout << std::endl << n << " files were included" << std::endl;
-    std::cout << "XAST archive successfully created" << std::endl;
+    std::cerr << std::endl << n << " files were included" << std::endl;
+    std::cerr << "XAST archive successfully created" << std::endl;
 
     return 0;
 }

@@ -29,7 +29,7 @@ uint64_t read64(std::ifstream& input) {
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
-        std::cout << "Usage : " << argv[0] << " <input> <output>" << std::endl;
+        std::cerr << "Usage : " << argv[0] << " <input> <output>" << std::endl;
         return -1;
     }
 
@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
 
     output.close();
 
-    std::cout <<
+    std::cerr <<
     std::endl << "Number of declared entries      : " << nbEntries << std::endl;
-    std::cout << "Number of extracted entries     : " << nFoundEntries << std::endl;
+    std::cerr << "Number of extracted entries     : " << nFoundEntries << std::endl;
 
     file.close();
 

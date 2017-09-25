@@ -33,7 +33,7 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 int main(int argc, char *argv[])
 {
     if ( argc < 3 ) {
-        std::cout << "Usage : " << argv[0] << " <input> <output>" << std::endl;
+        std::cerr << "Usage : " << argv[0] << " <input> <output>" << std::endl;
         return -1;
     }
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
             << " | " << fileChecksums[i] << " | " << isXai << std::endl;
 
         if ( isXai > 1 ) {
-            std::cout << "WARNING : unsupported value found for isXai : "
+            std::cerr << "WARNING : unsupported value found for isXai : "
                 << isXai << std::endl;
         }
 
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         ss << fileSizes[i] << std::endl;
 
         if ( uint64_t padding = read64(file) ) {
-            std::cout << "WARNING : unsupported value found for padding : "
+            std::cerr << "WARNING : unsupported value found for padding : "
                 << padding << std::endl;
             // return -3;
         }
@@ -199,12 +199,12 @@ int main(int argc, char *argv[])
         output.close();
     }
 
-    std::cout <<
+    std::cerr <<
     std::endl << "Number of declared entries      : " << maxEntries << std::endl;
-    std::cout << "Number of actual entries        : " << nbActualEntries << std::endl;
-    std::cout << "Number of used entries          : " << nbEntries << std::endl;
-    std::cout << "Number of filepaths             : " << n << std::endl;
-    std::cout << "Number of extracted entries     : " << nFoundEntries << std::endl;
+    std::cerr << "Number of actual entries        : " << nbActualEntries << std::endl;
+    std::cerr << "Number of used entries          : " << nbEntries << std::endl;
+    std::cerr << "Number of filepaths             : " << n << std::endl;
+    std::cerr << "Number of extracted entries     : " << nFoundEntries << std::endl;
 
     file.close();
 
