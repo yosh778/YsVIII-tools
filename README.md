@@ -83,14 +83,14 @@ Requires Node.js 6+ (8.5 recommended)
 
 ### Unpacking
 
-Usage : `node tbbconv.js unpack <inputTBB> <outputCSV>`
+Usage : `node tbbconv/tbbconv.js unpack <inputTBB> <outputCSV>`
 
 Converts a TBB input file into a CSV output file.
 
 
 ### Packer
 
-Usage : `node tbbconv.js pack <inputCSV> <outputTBB> (--enc shift-jis)`
+Usage : `node tbbconv/tbbconv.js pack <inputCSV> <outputTBB> (--enc shift-jis)`
 
 Converts a CSV input file into a TBB output file.
 
