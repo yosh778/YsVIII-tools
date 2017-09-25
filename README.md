@@ -26,13 +26,16 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 
 ## TODO
 
-- Find out how .tbb files work & create modding tools
-- Fix status.tbb in 1stload.dat to translate monster names
-- Fix pl_const.plt hacking, latest still has some tiny issues
-- Fix any leftover bug with lit_rtxt.csv (nothing new yet)
-- Find out if any file .rsb in flash/pkg_menu.xai needs translation & how to fix .rsb files if needed
 - Swap game title & other main resources like manual
-- Translate trophies if doable
+
+### Secondary
+
+- Find out how .tbb files work & create modding tools
+- Fix pl_const.plt hacking, latest still has some tiny issues
+- Fix status.tbb in 1stload.dat to translate monster names
+- Fix any leftover bug with lit_rtxt.csv (nothing new yet)
+- Fix pkg_menu/help.rsb if any use
+- Translate trophies ?
 
 
 ## XAST
