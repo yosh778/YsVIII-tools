@@ -78,6 +78,9 @@ Usage : `unplt <input> <output>`
 Extracts all strings from an input PLT archive into the given output text file.
 
 ## TBB
+
+Requires Node.js 6+ (8.5 recommended)
+
 ### Unpacking
 
 Usage : `node tbbconv.js unpack <inputTBB> <outputCSV>`
