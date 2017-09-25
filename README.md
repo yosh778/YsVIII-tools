@@ -56,6 +56,20 @@ Packs a whole folder as a DAT output archive.
 
 WARNING : filenames must not be more than 15 characters, also no folder structure should be used in theory.
 
+## PLT
+### Unpacker
+
+Usage : `unplt <input> <output>`
+
+Extracts all strings from an input PLT archive into the given output text file.
+
+
+### Packer
+
+Usage : `plt <folder> <output>`
+
+Packs a text PLT into a binary PLT output archive.
+
 ## Credits
 
 Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the checksum algorithm, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
