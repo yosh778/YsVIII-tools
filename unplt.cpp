@@ -7,7 +7,6 @@
 #include <sstream>
 #include <fstream>
 #include <cinttypes>
-#include <boost/filesystem.hpp>
 
 uint16_t read16(std::ifstream& input) {
     uint16_t data;
