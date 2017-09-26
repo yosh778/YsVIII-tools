@@ -27,10 +27,10 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 
 ## TODO
 
-- Improve some .tbb files
+- Translate pkg_menu/help.rsb : tutorial strings
+- Improve some .tbb files if needed
 - Improve pl_const.plt hacking
 - Improve lit_rtxt.csv if needed
-- Fix pkg_menu/help.rsb if any use
 - Translate trophies ?
 
 
