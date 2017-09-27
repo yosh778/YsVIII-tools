@@ -25,9 +25,9 @@ I will not post them here but you can always look for them elsewhere
 Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Finished, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
 
-## TODO
+## Work left undone
 
-- Translate pkg_menu/help.rsb : tutorial strings
+- Translate cancel menu string on the first skill tutorial
 - Improve some .tbb files if needed
 - Improve pl_const.plt hacking
 - Improve lit_rtxt.csv if needed
