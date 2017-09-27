@@ -20,7 +20,7 @@ Something like `./swap.sh 1stload.list 1stload_eng/ 1stload_jap/`, otherwise you
 Something like `./swap.sh pkg_menu.list pkg_menu_eng/ pkg_menu_jap/`, otherwise you can just replace each non-commented file in `pkg_menu.list` with its english version (`swap.sh` does that)
 - Some files from 1stload.dat like pl_const.plt & lit_rtxt.csv require manual hacking to work correctly, mostly encoding fixes.
 I will not post them here but you can always look for them elsewhere
-- Now unpack & then repack .tbb files in 1stload.dat using TBB tools with `--enc shift-jis`, & place these in your patched 1stload folder
+- Now unpack & then repack uncommented files from tbb2shift.list in 1stload.dat using TBB tools with `--enc shift-jis`, & place these in your patched 1stload folder
 - Finally, repack the fixed 1stload.dat & pkg_menu.xai files using the `dat` & `xai` tools, use it as system/1stload.dat & flash/pkg_menu.xai in 102 & then repack 102 using the XAST Packer.
 Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Finished, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
