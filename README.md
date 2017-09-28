@@ -27,6 +27,7 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 
 ## Work left undone
 
+- Fix Game breaking bugs. (Freezes & Crashes)
 - Translate cancel menu string on the first skill tutorial
 - Improve some .tbb files if needed
 - Improve pl_const.plt hacking
