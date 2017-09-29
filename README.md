@@ -27,12 +27,15 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 
 ## Work left undone
 
-- Fix Game breaking bugs. (Freezes & Crashes)
+### Primary
+
+- Fix game breaking bugs (freezes & crashes)
+
+### Secondary
 - Translate cancel menu string on the first skill tutorial
 - Improve some .tbb files if needed
-- Improve pl_const.plt hacking
-- Improve lit_rtxt.csv if needed
-- Translate trophies ?
+- Improve pl_const.plt hacking if possible
+- Translate trophies ? (risky & not doable yet it seems)
 
 
 ## XAST
