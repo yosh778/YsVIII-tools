@@ -3,8 +3,10 @@ INC=
 LIB=
 LSUFFIX=
 
+CCFLAGS=-std=c++11 #-g
+
 ifeq ($(OS),Windows_NT)
-	CCFLAGS += -D WIN32
+	CCFLAGS += -D WIN32 -static -static-libgcc -static-libstdc++
 	INC=C:\Program Files\boost\include\boost-1_65_1
 	LIB=C:\Program Files\boost\lib
 	LSUFFIX=-mgw63-mt-1_65_1
@@ -40,7 +42,6 @@ else
 endif
 
 IFLAGS=-I"${INC}"
-CCFLAGS=-std=c++11 #-g
 LFLAGS=-L"${LIB}" -lboost_system${LSUFFIX} -lboost_filesystem${LSUFFIX}
 
 all: xai unxai dat undat plt unplt
