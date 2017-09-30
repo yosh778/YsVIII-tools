@@ -14,6 +14,8 @@ To do that, use the XAST Unpacker to extract english rootast.xai & patch101.xai 
 - First use the DAT Unpacker to extract both japanese / english system/1stload.dat files
 - Now use the `swap.sh` bash script on `1stload.list` and english then japanese directories created in last step.
 Something like `./swap.sh 1stload.list 1stload_eng/ 1stload_jap/`, otherwise you can just replace each non-commented file in `1stload.list` with its english version (`swap.sh` does that)
+- Some files from 1stload.list will be missing from the extracted english 1stload.dat, so just check which ones are missing according to what failed on last step & get those files from the extracted patch101.xai or else rootast.xai english files.
+Then, reproduce the last step again, it should work fine now.
 - Now we'll patch the japanese flash/pkg_menu.xai
 - First use the XAST Unpacker to extract both japanese / english flash/pkg_menu.xai files
 - Now use the `swap.sh` bash script on `pkg_menu.list` and english then japanese directories created in last step.
