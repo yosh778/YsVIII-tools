@@ -40,6 +40,13 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Hack into pl_const.plt to improve icon positions if possible
 - Translate trophies ? (risky & not doable yet it seems)
 
+## Eboot patcher
+
+Usage : `python patchEboot.py <eboot>`
+
+This python script enables you to apply eboot specific patches. For mai dumps, run it on both the base eboot.bin & the mai_moe/eboot_origin.bin.
+This patch allows you to get the savedata level text to display as "Lv 17" instead of "Lv17" for instance, just like the US/EU game does.
+
 
 ## XAST
 ### Unpacker
