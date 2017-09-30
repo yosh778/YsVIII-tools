@@ -9,7 +9,7 @@ ifeq ($(OS),Windows_NT)
 	CCFLAGS += -D WIN32 -static -static-libgcc -static-libstdc++
 	INC=C:\Program Files\boost\include\boost-1_65_1
 	LIB=C:\Program Files\boost\lib
-	LSUFFIX=-mgw63-mt-1_65_1
+	LSUFFIX=-mgw48-mt-1_65_1
 
 	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
 		CCFLAGS += -D AMD64
@@ -65,6 +65,6 @@ unplt: unplt.cpp
 	g++ -o unplt unplt.cpp ${CCFLAGS}
 
 clean:
-	rm unxai xai
-	rm undat dat
-	rm unplt plt
+	rm unxai xai -f
+	rm undat dat -f
+	rm unplt plt -f
