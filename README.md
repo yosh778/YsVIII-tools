@@ -28,6 +28,7 @@ Then, you must change the quote system used here. Indeed, english uses quotes li
 - Finally, repack the fixed 1stload.dat & pkg_menu.xai files using the `dat` & `xai` tools, use it as system/1stload.dat & flash/pkg_menu.xai in 102 & then repack 102 using the XAST Packer.
 Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Finished, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
+- Additionally, you can use the eboot patcher below to fix some details from the eboot itself
 
 ## Work left undone
 
