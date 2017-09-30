@@ -67,7 +67,7 @@ shop2.tbb
 #skilldef.h	TODO : TEST
 skill.tbb
 soundefx.tbb
-#status.tbb	BUG : Can't move
+status.tbb
 system01.itp
 talk.bin
 talkcam.bin
