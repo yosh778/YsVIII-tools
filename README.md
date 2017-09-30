@@ -36,9 +36,8 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Fix game breaking bugs (freezes & crashes)
 
 ### Secondary
-- Translate cancel menu string on the first skill tutorial
-- Improve some .tbb files if needed
-- Improve pl_const.plt hacking if possible
+
+- Hack into pl_const.plt to improve icon positions if possible
 - Translate trophies ? (risky & not doable yet it seems)
 
 
