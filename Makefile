@@ -47,22 +47,22 @@ LFLAGS=-L"${LIB}" -lboost_system${LSUFFIX} -lboost_filesystem${LSUFFIX}
 all: xai unxai dat undat plt unplt
 
 xai: xai.cpp
-	g++ -o xai xai.cpp ${IFLAGS} ${CCFLAGS} ${LFLAGS}
+	g++ ${CCFLAGS} -o $@ $< ${IFLAGS} ${LFLAGS}
 
 unxai: unxai.cpp
-	g++ -o unxai unxai.cpp ${IFLAGS} ${CCFLAGS} ${LFLAGS}
+	g++ ${CCFLAGS} -o $@ $< ${IFLAGS} ${LFLAGS}
 
 dat: dat.cpp
-	g++ -o dat dat.cpp ${IFLAGS} ${CCFLAGS} ${LFLAGS}
+	g++ ${CCFLAGS} -o $@ $< ${IFLAGS} ${LFLAGS}
 
 undat: undat.cpp
-	g++ -o undat undat.cpp ${IFLAGS} ${CCFLAGS} ${LFLAGS}
+	g++ ${CCFLAGS} -o $@ $< ${IFLAGS} ${LFLAGS}
 
 plt: plt.cpp
-	g++ -o plt plt.cpp ${CCFLAGS}
+	g++ ${CCFLAGS} -o $@ $<
 
 unplt: unplt.cpp
-	g++ -o unplt unplt.cpp ${CCFLAGS}
+	g++ ${CCFLAGS} -o $@ $<
 
 clean:
 	rm unxai xai -f
