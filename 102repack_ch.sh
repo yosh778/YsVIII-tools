@@ -41,7 +41,7 @@ cp -f custom/pl_const_ch.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
 # mkdir -p tbb
 # ./swap.sh $TBB_LIST $DAT_ENG_DIR tbb > /dev/null
 
-cp -f tbb_ch/* $DAT_FIX_DIR
+cp -f tbb_utf8/* $DAT_FIX_DIR
 
 
 ./dat $DAT_FIX_DIR $DAT_OUT > /dev/null

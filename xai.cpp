@@ -18,7 +18,7 @@ void write32(std::fstream& output, uint32_t data) {
     output.write((char*)&data, (int)sizeof(data));
 }
 
-uint64_t write64(std::fstream& output, uint64_t data) {
+void write64(std::fstream& output, uint64_t data) {
     output.write((char*)&data, (int)sizeof(data));
 }
 
