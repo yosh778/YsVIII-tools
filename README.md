@@ -3,9 +3,9 @@
 Unpacking & Packing tools for Ys VIII assets
 
 
-## How to translate Ys VIII (JP) with it ?
+## How to translate Ys VIII (JP / CH) with it ?
 
-- First you need the japanese game with the 1.02 update (PCSG00881) & the dumped english assets including the 1.01 update (tested on the EUR version, PCSB01128)
+- First you need the Japanese (PCSG00881) or Chinese (PCSH00297) game with the 1.02 update & the dumped english assets including the 1.01 update (tested on the EUR version, PCSB01128). Seems the chinese game as base works better though !
 - Replace rootast.xai & patch101.xai with english ones first
 - Now, we need to fix the japanese patch102.xai with english.
 To do that, use the XAST Unpacker to extract english rootast.xai & patch101.xai & japanese patch102.xai
@@ -20,9 +20,11 @@ Then, reproduce the last step again, it should work fine now.
 - First use the XAST Unpacker to extract both japanese / english flash/pkg_menu.xai files
 - Now use the `swap.sh` bash script on `pkg_menu.list` and english then japanese directories created in last step.
 Something like `./swap.sh pkg_menu.list pkg_menu_eng/ pkg_menu_jap/`, otherwise you can just replace each non-commented file in `pkg_menu.list` with its english version (`swap.sh` does that)
-- Some files from 1stload.dat like pl_const.plt & lit_rtxt.csv require manual hacking to work correctly, mostly encoding fixes.
-I will not post them here but you can always look for them elsewhere
-- Now unpack & then repack uncommented files from tbb2shift.list in 1stload.dat using TBB tools with `--enc shift-jis`, & place these in your patched 1stload folder
+- For pl_const.plt & lit_rtxt.csv from from 1stload.dat, you need to hack more manually
+- For pl_const.plt, just use the english one for the chinese game. For the Japanese game, you have to convert the encoding to SHIFT-JIS by first unpacking it, & then once fixed repack it using the PLT tools
+- For lit_rtxt.csv, with the Japanese game you have to convert the encoding to SHIFT-JIS again.
+Then, you must change the quote system used here. Indeed, english uses quotes like "this", you have to convert them to something like 「this」 (take the quote characters directly from the original game's file to make sure the encoding is right !)
+- Now for the japanese version only, unpack & then repack uncommented files from tbb2shift.list in 1stload.dat using TBB tools with `--enc shift-jis`, & place these in your patched 1stload folder (this should fix encoding issues)
 - Finally, repack the fixed 1stload.dat & pkg_menu.xai files using the `dat` & `xai` tools, use it as system/1stload.dat & flash/pkg_menu.xai in 102 & then repack 102 using the XAST Packer.
 Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Finished, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
