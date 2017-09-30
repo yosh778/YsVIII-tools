@@ -102,7 +102,7 @@ Usage : `node tbbconv/tbbconv.js pack <inputCSV> <outputTBB> (--enc shift-jis)`
 
 Converts a CSV input file into a TBB output file.
 
-Add the `--enc shift-jis` argument to repack a into shift-jis (CSV is unicode)
+When workingon the Japanese game, add the `--enc shift-jis` argument to repack into shift-jis.
 
 ## Credits
 
