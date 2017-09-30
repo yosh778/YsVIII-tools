@@ -67,6 +67,7 @@ shop2.tbb
 #skilldef.h	TODO : TEST
 skill.tbb
 soundefx.tbb
+# status.tbb bugs on the japanese game, so we have to reencode it later for this game
 status.tbb
 system.bin
 system01.itp
