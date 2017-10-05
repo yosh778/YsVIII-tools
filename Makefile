@@ -71,3 +71,4 @@ clean:
 	rm unxai xai -f
 	rm undat dat -f
 	rm unplt plt -f
+	rm xaiPatch -f
