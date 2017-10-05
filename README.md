@@ -69,6 +69,14 @@ it will use the same header structure to avoid game compatibility issues (recomm
 WARNING : When specifying the original .xai, DO NOT add new files (not supported yet).
 
 
+### Patcher
+
+Usage : `xaiPatch <inputXai> <inputFile> <filename>`
+
+Replaces a specific file from the input XAST archive with a new one.
+You must provide the correct filepath from the XAST archive as filename (example : flash/pl_const.plt)
+
+
 ## DAT
 ### Unpacker
 
