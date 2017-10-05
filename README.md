@@ -76,6 +76,8 @@ Usage : `xaiPatch <inputXai> <inputFile> <filename>`
 Replaces a specific file from the input XAST archive with a new one.
 You must provide the correct filepath from the XAST archive as filename (example : flash/pl_const.plt)
 
+WARNING : both files must be the same size
+
 
 ## DAT
 ### Unpacker
