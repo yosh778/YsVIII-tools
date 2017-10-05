@@ -95,11 +95,13 @@ int main(int argc, char *argv[])
 	std::unordered_map<std::string, int> headerMap;
 	uint32_t i = 0;
 
-	// Compress input directory recursively
+	// Read input directory recursively
 	for ( ; it != end; ++it ) {
 	  bool is_dir = is_directory( *it );
 
 	  std::string fullpath = it->path().string();
+	  std::replace(fullpath.begin(), fullpath.end(), '\\', '/');
+
 	  std::string filename = fullpath.substr( inPath.size() );
 
 	  if ( filename.front() == '/' ) {
