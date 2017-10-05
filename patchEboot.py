@@ -17,10 +17,10 @@ def patchEboot(path):
 			offset0 = data.find(bSaveLvlOrigin)
 			offset1 = data.find(bSaveLvlOrigin, offset0 + len(saveLvlOrigin))
 
-			print('First offset  : ' + hex(offset0))
-			print('Second offset : ' + hex(offset1))
-
 			if offset0 > 1000 and offset1 > 1000:
+				print('First offset  : ' + hex(offset0))
+				print('Second offset : ' + hex(offset1))
+
 				fh.seek(offset0)
 				fh.write(bytes(saveLvlPatch0, 'utf8'))
 				fh.seek(offset1)
@@ -28,14 +28,11 @@ def patchEboot(path):
 				print(path + ' patched')
 
 			else:
-				raise Exception()
+				print("File does not require patching")
 
 	except IOError:
 		print(path + ' not found')
 
-	except Exception:
-		print(path + ' could not be patched (already is or wrong file type)')
-
 
 if __name__ == "__main__":
-   patchEboot(sys.argv[1])
+	patchEboot(sys.argv[1])

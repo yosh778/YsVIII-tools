@@ -44,7 +44,7 @@ endif
 IFLAGS=-I"${INC}"
 LFLAGS=-L"${LIB}" -lboost_system${LSUFFIX} -lboost_filesystem${LSUFFIX}
 
-all: xai unxai dat undat plt unplt
+all: xai unxai dat undat plt unplt xaiPatch
 
 xai: xai.cpp
 	g++ ${CCFLAGS} -o $@ $< ${IFLAGS} ${LFLAGS}
@@ -62,6 +62,9 @@ plt: plt.cpp
 	g++ ${CCFLAGS} -o $@ $<
 
 unplt: unplt.cpp
+	g++ ${CCFLAGS} -o $@ $<
+
+xaiPatch: xaiPatch.cpp
 	g++ ${CCFLAGS} -o $@ $<
 
 clean:
