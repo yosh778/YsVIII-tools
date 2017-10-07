@@ -6,9 +6,9 @@ ascii2l.itp
 balance.tbb
 c000.mtb
 c001.mtb
-c002.mtb
+#c002.mtb	One of those bugs laxia's finisher, other .mtb only changed smthg like checksum
 c003.mtb
-c004.mtb
+#c004.mtb	One of those bugs laxia's finisher, other .mtb only changed smthg like checksum
 c005.mtb
 #def.h OK
 diary.tbb

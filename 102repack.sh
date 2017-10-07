@@ -37,6 +37,9 @@ cp -f custom/lit_rtxt.csv $PATCH_102_FIX_DIR/system/lit_rtxt.csv
 cp -f custom/pl_const.plt $DAT_FIX_DIR
 cp -f custom/pl_const.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
 
+cp -f custom/mp1103.bin $PATCH_102_FIX_DIR/script/mp1103.bin
+
+cp -f custom/item.bin $DAT_FIX_DIR
 
 # mkdir -p tbb
 # ./swap.sh $TBB_LIST $DAT_ENG_DIR tbb > /dev/null
@@ -53,3 +56,4 @@ cp -f $PATCH_102_OUT patch102.xai
 # Some checks
 diff $PATCH_102_FIX_DIR/flash/pkg_menu.xai $PKG_MENU_OUT
 diff $PATCH_102_FIX_DIR/system/1stload.dat $DAT_OUT
+
