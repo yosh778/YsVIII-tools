@@ -38,6 +38,7 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 
 ### Secondary
 
+- Fix issues
 - Hack into pl_const.plt to improve icon positions if possible
 - Translate trophies ? (risky & not doable yet it seems)
 
