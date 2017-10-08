@@ -202,6 +202,13 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				std::cout << ", o";
 
 				uint32_t count = arg.uVal;
+
+				if ( count > (pEnd - pSeg) ) {
+					std::cerr << "FATAL ERROR, segment aborted" << std::endl;
+					std::cout << "FATAL ERROR, segment aborted" << std::endl;
+					return;
+				}
+
 				print_hex((uint8_t*)pSeg, count);
 
 				pSeg += count;
