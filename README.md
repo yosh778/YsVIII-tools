@@ -119,7 +119,7 @@ Converts a CSV input file into a TBB output file.
 When workingon the Japanese game, add the `--enc shift-jis` argument to repack into shift-jis.
 
 
-## Scripts
+## Scripting
 
 ### Disassembler
 
