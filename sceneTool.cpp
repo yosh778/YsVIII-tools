@@ -102,6 +102,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 	std::cout << std::endl;
 	std::cout << "0x" << std::hex << (int)segHead.offset << std::dec << std::endl;
 	std::cout << segHead.name << std::endl;
+	std::cout << "Size : 0x" << std::hex << (int)segHead.size << std::dec << std::endl;
 
 	char *pSeg = segment, *pEnd = segment + size;
 
@@ -162,15 +163,15 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			switch ( tag ) {
 
 			case INT_TAG:
-				std::cout << ", # " << arg.iVal;
+				std::cout << ", #" << arg.iVal;
 				break;
 
 			case FLOAT_TAG:
-				std::cout << ", . " << arg.fVal;
+				std::cout << ", f" << arg.fVal;
 				break;
 
 			case STRING_TAG: {
-				std::cout << ", s ";
+				std::cout << ", \"";
 
 				uint32_t len = arg.uVal;
 				char data[len+1];
@@ -180,7 +181,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg += len;
 
 				// TODO : find unambiguous string delimiters
-				std::cout << data; }
+				std::cout << data << "\""; }
 				break;
 
 
