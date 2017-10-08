@@ -15,30 +15,30 @@
 
 
 uint16_t read16(std::ifstream& input) {
-    uint16_t data;
-    input.read((char*)&data, (int)sizeof(data));
-    return data;
+	uint16_t data;
+	input.read((char*)&data, (int)sizeof(data));
+	return data;
 }
 
 uint32_t read32(std::ifstream& input) {
-    uint32_t data;
-    input.read((char*)&data, (int)sizeof(data));
-    return data;
+	uint32_t data;
+	input.read((char*)&data, (int)sizeof(data));
+	return data;
 }
 
 uint64_t read64(std::ifstream& input) {
-    uint64_t data;
-    input.read((char*)&data, (int)sizeof(data));
-    return data;
+	uint64_t data;
+	input.read((char*)&data, (int)sizeof(data));
+	return data;
 }
 
 // Checksum reverse by weaknespase
 uint32_t checksum(const char* in, const uint32_t length, int last = 0){
-    const char* end = in + length;
-    int acc = last;
-    while (in < end)
-        acc = (acc * 33) ^ (unsigned char) *in++;
-    return acc;
+	const char* end = in + length;
+	int acc = last;
+	while (in < end)
+		acc = (acc * 33) ^ (unsigned char) *in++;
+	return acc;
 }
 
 #define read_elem(fh, elem) fh.read((char*)&elem, (int)sizeof(elem))
@@ -48,49 +48,49 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead );
 
 void print_hex(uint8_t *data, uint32_t size)
 {
-    for (uint32_t i = 0; i < size; ++i) {
-        std::cout << " " << std::hex << std::setfill('0') << std::setw(2)
-    		<< (int)data[i] << std::dec;
-    }
+	for (uint32_t i = 0; i < size; ++i) {
+		std::cout << " " << std::hex << std::setfill('0') << std::setw(2)
+			<< (int)data[i] << std::dec;
+	}
 }
 
 
 int main(int argc, char *argv[])
 {
-    if ( argc < 2 ) {
-        std::cerr << "Usage : " << argv[0] << " <script>" << std::endl;
-        return -1;
-    }
+	if ( argc < 2 ) {
+		std::cerr << "Usage : " << argv[0] << " <script>" << std::endl;
+		return -1;
+	}
 
-    std::string iPath = argv[1];
+	std::string iPath = argv[1];
 
-    std::ifstream iFile( iPath.c_str(), std::ios_base::binary );
+	std::ifstream iFile( iPath.c_str(), std::ios_base::binary );
 
-    if ( !iFile.is_open() ) {
-    	std::cerr << iPath << " not found" << std::endl;
-        return -2;
-    }
+	if ( !iFile.is_open() ) {
+		std::cerr << iPath << " not found" << std::endl;
+		return -2;
+	}
 
 
-    FILE_HEADER_V2 headerV2;
-    read_elem( iFile, headerV2 );
+	FILE_HEADER_V2 headerV2;
+	read_elem( iFile, headerV2 );
 
-    if ( strncmp( headerV2.magic, "YS7_SCP", 8 ) ) {
-        std::cerr << "Invalid input file" << std::endl;
-        iFile.close();
-        return 1;
-    }
+	if ( strncmp( headerV2.magic, "YS7_SCP", 8 ) ) {
+		std::cerr << "Invalid input file" << std::endl;
+		iFile.close();
+		return 1;
+	}
 
-    SEGMENT_HEADER segHeads[ headerV2.segs_count ];
-    read_elem( iFile, segHeads );
+	SEGMENT_HEADER segHeads[ headerV2.segs_count ];
+	read_elem( iFile, segHeads );
 
-    for ( int i = 0; i < headerV2.segs_count; i++ ) {
-        process_segment( iFile, segHeads[i] );
-    }
+	for ( int i = 0; i < headerV2.segs_count; i++ ) {
+		process_segment( iFile, segHeads[i] );
+	}
 
-    iFile.close();
+	iFile.close();
 
-    return 0;
+	return 0;
 }
 
 inline bool isJapOpCode( uint16_t code )
