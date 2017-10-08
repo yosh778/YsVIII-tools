@@ -189,16 +189,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				std::cout << data << "\""; }
 				break;
 
-
-			default:
-				std::cerr << std::endl
-					<< "ERROR : Unknown argument 0x" << std::hex << (int)tag
-					<< " at offset 0x" << (pArg - segment + segHead.offset)
-					<< std::dec;
-
-				std::cerr << std::endl << "Parsing as 0x82E0 anyway";
-
-			case UNK0_TAG:
+			case UNK0_TAG: {
 				std::cout << ", o";
 
 				uint32_t count = arg.uVal;
@@ -211,7 +202,16 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				print_hex((uint8_t*)pSeg, count);
 
-				pSeg += count;
+				pSeg += count; }
+				break;
+
+			default:
+				std::cerr << std::endl
+					<< "ERROR : Unknown argument 0x" << std::hex << (int)tag
+					<< " at offset 0x" << (pArg - segment + segHead.offset)
+					<< std::dec;
+
+				std::cout << ", " << std::hex << "0x" << (int)tag << " : 0x" << arg.uVal << std::dec;
 				break;
 			}
 		}
