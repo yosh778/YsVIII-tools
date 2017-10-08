@@ -103,7 +103,7 @@ Extracts all strings from an input PLT archive into the given output text file.
 
 Requires Node.js 6+ (8.5 recommended)
 
-### Unpacking
+### Unpacker
 
 Usage : `node tbbconv/tbbconv.js unpack <inputTBB> <outputCSV>`
 
@@ -118,6 +118,17 @@ Converts a CSV input file into a TBB output file.
 
 When workingon the Japanese game, add the `--enc shift-jis` argument to repack into shift-jis.
 
+
+## Scripts
+
+### Disassembler
+
+Usage : `sceneTool <script>`
+
+Converts a bytecode script into text.
+Credits to [weaknespase](https://github.com/weaknespase) for the [file format reverse](https://gist.github.com/weaknespase/d0a26fbc21a77616199969fe08cd48c2)
+
+
 ## Credits
 
-Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the XAST checksum + TBB tools, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
+Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the XAST checksum, TBB tools, script reversing, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
