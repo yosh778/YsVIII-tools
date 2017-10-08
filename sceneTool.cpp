@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
 
 #include <sstream>
 #include <fstream>
@@ -44,6 +45,14 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 
 
 void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead );
+
+void print_hex(uint8_t *data, uint32_t size)
+{
+    for (uint32_t i = 0; i < size; ++i) {
+        std::cout << " " << std::hex << std::setfill('0') << std::setw(2)
+    		<< (int)data[i];
+    }
+}
 
 
 int main(int argc, char *argv[])
@@ -172,18 +181,14 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				std::cerr << std::endl << "Parsing as 0x82E0 anyway";
 
-			case UNK0_TAG: {
-				std::cout << ", unk0 ";
+			case UNK0_TAG:
+				std::cout << ", unk0 =";
 
 				uint32_t count = arg.uVal;
-				char data[count+1];
 
-				strncpy(data, pSeg, count);
-				data[count] = 0;
+				print_hex(pSeg, count);
+
 				pSeg += count;
-
-				// TODO : find unambiguous unk0 delimiters
-				std::cout << data; }
 				break;
 			}
 
