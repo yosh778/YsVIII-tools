@@ -50,7 +50,7 @@ void print_hex(uint8_t *data, uint32_t size)
 {
     for (uint32_t i = 0; i < size; ++i) {
         std::cout << " " << std::hex << std::setfill('0') << std::setw(2)
-    		<< (int)data[i];
+    		<< (int)data[i] << std::dec;
     }
 }
 
