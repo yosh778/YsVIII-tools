@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
 inline bool isOpCode( uint16_t code )
 {
-	return (0x8000 <= code && code <= 0x8181);
+	return (0x8000 <= code && code <= 0x8182);
 }
 
 void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
@@ -122,7 +122,16 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			<< (int)(pSeg - segment) << ": "
 			<< std::dec;
 
-		std::cout << opCodeNames[ opcode - OPCODE_exit ];
+		uint32_t opcode_idx = opcode - OPCODE_exit;
+		std::string opcode_name;
+
+		if ( opcode_idx < sizeof(opCodeNames)/sizeof(char*) ) {
+			opcode_name = opCodeNames[ opcode_idx ];
+			std::cout << opcode_name;
+		}
+		else {
+			std::cout << std::hex << "0x" << opcode << std::dec;
+		}
 
 		// std::cerr << std::endl << "pSeg = " << std::hex << (int)pSeg << std::dec;
 		pSeg += sizeof(uint16_t);
@@ -209,10 +218,13 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				std::cerr << std::endl
 					<< "ERROR : Unknown argument 0x" << std::hex << (int)tag
 					<< " at offset 0x" << (pArg - segment + segHead.offset)
-					<< std::dec;
+					<< std::dec << ", stopping argument parsing";
 
-				std::cout << ", " << std::hex << "0x" << (int)tag << " : 0x" << arg.uVal << std::dec;
+				pSeg = (char*)pArg;
 				break;
+
+				// std::cout << ", " << std::hex << "0x" << (int)tag << " : 0x" << arg.uVal << std::dec;
+				// break;
 			}
 		}
 	}
