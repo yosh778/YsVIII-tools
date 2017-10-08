@@ -118,18 +118,22 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			return;
 		}
 
+		std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
+			<< (int)(pSeg - segment) << ": "
+			<< std::dec;
+
+		std::cout << opCodeNames[ opcode - OPCODE_exit ];
+
 		// std::cerr << std::endl << "pSeg = " << std::hex << (int)pSeg << std::dec;
 		pSeg += sizeof(uint16_t);
 		// std::cerr << std::endl << "sizeof(uint16_t) = " << sizeof(uint16_t);
 		// std::cerr << std::endl << "pSeg = " << std::hex << (int)pSeg << std::dec;
 		// std::cerr << std::endl << "opcode = " << std::hex << (int)opcode << std::dec;
 
-		std::cout << std::endl << opCodeNames[ opcode - OPCODE_exit ];
-
-		if ( opcode == OPCODE_exit ) {
-			std::cout << std::endl;
-			return;
-		}
+		// if ( opcode == OPCODE_exit ) {
+		// 	std::cout << std::endl;
+		// 	return;
+		// }
 
 		bool is_opcode = false;
 
@@ -172,6 +176,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 			case STRING_TAG: {
 				std::cout << ", \"";
+				// std::cout << ", "<<arg.uVal<<"\"";
 
 				uint32_t len = arg.uVal;
 				char data[len+1];
@@ -202,8 +207,8 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg += count;
 				break;
 			}
-
-		};
-
+		}
 	}
+
+	std::cout << std::endl;
 }
