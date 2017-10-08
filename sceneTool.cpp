@@ -66,12 +66,20 @@ int main(int argc, char *argv[])
 
     std::ifstream iFile( iPath.c_str(), std::ios_base::binary );
 
-    if ( !iFile.is_open() )
+    if ( !iFile.is_open() ) {
+    	std::cerr << iPath << " not found" << std::endl;
         return -2;
+    }
 
 
     FILE_HEADER_V2 headerV2;
     read_elem( iFile, headerV2 );
+
+    if ( strncmp( headerV2.magic, "YS7_SCP", 8 ) ) {
+        std::cerr << "Invalid input file" << std::endl;
+        iFile.close();
+        return 1;
+    }
 
     SEGMENT_HEADER segHeads[ headerV2.segs_count ];
     read_elem( iFile, segHeads );
