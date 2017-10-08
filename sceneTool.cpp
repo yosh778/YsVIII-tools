@@ -92,6 +92,8 @@ inline bool isOpCode( uint16_t code )
 
 void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 {
+	fh.seekg( segHead.offset );
+
 	uint32_t size = segHead.size;
 	char *segment = (char*)malloc( size );
 
@@ -185,8 +187,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				std::cout << ", unk0 =";
 
 				uint32_t count = arg.uVal;
-
-				print_hex(pSeg, count);
+				print_hex((uint8_t*)pSeg, count);
 
 				pSeg += count;
 				break;
