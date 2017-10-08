@@ -67,7 +67,7 @@ unplt: unplt.cpp
 xaiPatch: xaiPatch.cpp
 	g++ ${CCFLAGS} -o $@ $<
 
-sceneTool: sceneTool.cpp sceneTool.hh
+sceneTool: sceneTool.cpp sceneTool.hh sceneOpCodes.hh sceneOpCodeNames.hh
 	g++ ${CCFLAGS} -fpermissive -o $@ $<
 
 
@@ -76,3 +76,4 @@ clean:
 	rm undat dat -f
 	rm unplt plt -f
 	rm xaiPatch -f
+	rm sceneTool -f
