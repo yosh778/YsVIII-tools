@@ -3,7 +3,7 @@ INC=
 LIB=
 LSUFFIX=
 
-CCFLAGS=-std=c++11 #-g
+CCFLAGS=-std=c++11 -g
 
 ifeq ($(OS),Windows_NT)
 	CCFLAGS += -D WIN32 -static -static-libgcc -static-libstdc++
@@ -66,6 +66,10 @@ unplt: unplt.cpp
 
 xaiPatch: xaiPatch.cpp
 	g++ ${CCFLAGS} -o $@ $<
+
+sceneTool: sceneTool.cpp sceneTool.hh
+	g++ ${CCFLAGS} -fpermissive -o $@ $<
+
 
 clean:
 	rm unxai xai -f
