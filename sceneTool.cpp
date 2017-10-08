@@ -115,7 +115,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				<< std::hex << (int)opcode
 				<< " at offset 0x" << (pSeg - segment + segHead.offset)
 				<< std::dec;
-			return;
+			// return;
 		}
 
 		std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
@@ -203,9 +203,13 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				uint32_t count = arg.uVal;
 
+				// if ( count != 8 ) {
+				// 	std::cerr << std::endl << "WARNING : 0x82E0 ARG size = " << count;
+				// }
+
 				if ( count > (pEnd - pSeg) ) {
-					std::cerr << "FATAL ERROR, segment aborted" << std::endl;
-					std::cout << "FATAL ERROR, segment aborted" << std::endl;
+					std::cerr << std::endl << "FATAL ERROR, segment aborted";
+					std::cout << std::endl << "FATAL ERROR, segment aborted";
 					return;
 				}
 
@@ -220,6 +224,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 					<< " at offset 0x" << (pArg - segment + segHead.offset)
 					<< std::dec << ", stopping argument parsing";
 
+				is_opcode = true;
 				pSeg = (char*)pArg;
 				break;
 
