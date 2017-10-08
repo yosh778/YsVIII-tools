@@ -85,6 +85,11 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+inline bool isJapOpCode( uint16_t code )
+{
+	return (0x8000 <= code && code <= 0x8181);
+}
+
 inline bool isOpCode( uint16_t code )
 {
 	return (0x8000 <= code && code <= 0x8182);
@@ -118,6 +123,14 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			// return;
 		}
 
+		else if ( !isJapOpCode( opcode ) ) {
+			std::cerr << std::endl << "WARNING : unsupported english opcode 0x"
+				<< std::hex << (int)opcode
+				<< " at offset 0x" << (pSeg - segment + segHead.offset)
+				<< std::dec;
+			// return;
+		}
+
 		std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
 			<< (int)(pSeg - segment) << ": "
 			<< std::dec;
@@ -145,6 +158,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 		// }
 
 		bool is_opcode = false;
+		uint16_t nargs = 0;
 
 		while ( !is_opcode && (pSeg < (pEnd-1)) ) {
 
@@ -154,7 +168,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			is_opcode = isOpCode( tag );
 			uint32_t tag_val;
 
-			if ( is_opcode ) {
+			if ( is_opcode || ++nargs >= 16 ) {
 				// std::cerr << std::endl << "New OPCODE detected";
 				break;
 			}
@@ -184,7 +198,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				break;
 
 			case STRING_TAG: {
-				std::cout << ", \"";
+				std::cout << ", s\"";
 				// std::cout << ", "<<arg.uVal<<"\"";
 
 				uint32_t len = arg.uVal;
@@ -196,6 +210,35 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				// TODO : find unambiguous string delimiters
 				std::cout << data << "\""; }
+				break;
+
+			case POPUP_TAG: {
+				std::cout << ", popup (" << arg.uVal << ":";
+
+				POPUP_ARG popup = *(POPUP_ARG*)pArg;
+				uint32_t nLines = popup.nLines;
+				uint32_t len = popup.len;
+				pSeg += sizeof(uint32_t);
+
+				uint32_t args[ nLines ];
+
+				for (uint32_t i = 0; i < nLines; i++) {
+					args[i] = *((uint32_t*)pSeg);
+					pSeg += sizeof(uint32_t);
+
+					std::cout << args[i] << ";";
+				}
+
+				std::cout << " \"";
+
+				char data[len+1];
+
+				strncpy(data, pSeg, len);
+				data[len] = 0;
+				pSeg += len;
+
+				// TODO : find unambiguous string delimiters
+				std::cout << data << "\")"; }
 				break;
 
 			case UNK0_TAG: {
@@ -217,6 +260,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				pSeg += count; }
 				break;
+
 
 			default:
 				std::cerr << std::endl

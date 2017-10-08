@@ -27,11 +27,10 @@ enum DataTag {
 	FLOAT_TAG = 0x82DE,
   STRING_TAG = 0x82DF,
 	UNK0_TAG = 0x82E0,
+
+  POPUP_TAG = 0x2020,
 };
 
-union TagValue {
-
-};
 
 struct __attribute__((__packed__)) GENERIC_ARG {
 
@@ -65,5 +64,13 @@ struct __attribute__((__packed__)) UNK0_ARG {
   uint16_t        tag_82E0;
   uint32_t        length;
   // uint8_t[length] value;
+};
+
+struct __attribute__((__packed__)) POPUP_ARG {
+  uint16_t  tag_2020;
+  uint32_t  nLines;
+  uint32_t  len;
+  // uint16_t[nLines] linePositions?
+  // char[len] popupText
 };
 
