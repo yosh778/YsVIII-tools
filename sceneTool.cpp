@@ -48,13 +48,12 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead );
 
 int main(int argc, char *argv[])
 {
-    if ( argc < 3 ) {
+    if ( argc < 2 ) {
         std::cerr << "Usage : " << argv[0] << " <script>" << std::endl;
         return -1;
     }
 
     std::string iPath = argv[1];
-    std::string oPath = argv[2];
 
     std::ifstream iFile( iPath.c_str(), std::ios_base::binary );
 
@@ -166,8 +165,14 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				std::cout << data; }
 				break;
 
-			case UNK0_TAG:
-			default: {
+
+			default:
+				std::cerr << std::endl << "ERROR : Unknown argument 0x"
+					<< std::hex << (int)tag << std::dec;
+
+				std::cerr << std::endl << "Parsing as 0x82E0 anyway";
+
+			case UNK0_TAG: {
 				std::cout << ", unk0 ";
 
 				uint32_t count = arg.uVal;
