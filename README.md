@@ -131,4 +131,6 @@ Credits to [weaknespase](https://github.com/weaknespase) for the [file format re
 
 # Credits
 
-Credits to Tony Blue for helping get the game on 3.60, [weaknespase](https://github.com/weaknespase) for the XAST checksum, TBB tools, script reversing, & [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
+- Tony Blue for helping get the game on 3.60
+- [weaknespase](https://github.com/weaknespase) for the XAST checksum, TBB tools, script reversing, ... he's our trump card :)
+- [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
