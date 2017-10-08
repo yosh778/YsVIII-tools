@@ -105,17 +105,20 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 	while ( pSeg < (pEnd-1) ) {
 
 		OpCode opcode = (OpCode)*((uint16_t*)pSeg);
+
+		if ( !isOpCode( opcode ) ) {
+			std::cerr << std::endl << "ERROR : bad opcode 0x"
+				<< std::hex << (int)opcode
+				<< " at offset 0x" << (pSeg - segment + segHead.offset)
+				<< std::dec;
+			return;
+		}
+
 		// std::cerr << std::endl << "pSeg = " << std::hex << (int)pSeg << std::dec;
 		pSeg += sizeof(uint16_t);
 		// std::cerr << std::endl << "sizeof(uint16_t) = " << sizeof(uint16_t);
 		// std::cerr << std::endl << "pSeg = " << std::hex << (int)pSeg << std::dec;
 		// std::cerr << std::endl << "opcode = " << std::hex << (int)opcode << std::dec;
-
-		if ( !isOpCode( opcode ) ) {
-			std::cerr << std::endl << "ERROR : bad opcode 0x"
-				<< std::hex << (int)opcode << std::dec;
-			return;
-		}
 
 		std::cout << std::endl << opCodeNames[ opcode - OPCODE_exit ];
 
@@ -128,6 +131,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 		while ( !is_opcode && (pSeg < (pEnd-1)) ) {
 
+			const char *pArg = pSeg;
 			GENERIC_ARG arg = *((GENERIC_ARG*)pSeg);
 			DataTag tag = (DataTag)arg.tag;
 			is_opcode = isOpCode( tag );
@@ -155,15 +159,15 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			switch ( tag ) {
 
 			case INT_TAG:
-				std::cout << ", int " << arg.iVal;
+				std::cout << ", # " << arg.iVal;
 				break;
 
 			case FLOAT_TAG:
-				std::cout << ", float " << arg.fVal;
+				std::cout << ", . " << arg.fVal;
 				break;
 
 			case STRING_TAG: {
-				std::cout << ", string ";
+				std::cout << ", s ";
 
 				uint32_t len = arg.uVal;
 				char data[len+1];
@@ -178,13 +182,15 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 
 			default:
-				std::cerr << std::endl << "ERROR : Unknown argument 0x"
-					<< std::hex << (int)tag << std::dec;
+				std::cerr << std::endl
+					<< "ERROR : Unknown argument 0x" << std::hex << (int)tag
+					<< " at offset 0x" << (pArg - segment + segHead.offset)
+					<< std::dec;
 
 				std::cerr << std::endl << "Parsing as 0x82E0 anyway";
 
 			case UNK0_TAG:
-				std::cout << ", unk0 =";
+				std::cout << ", o";
 
 				uint32_t count = arg.uVal;
 				print_hex((uint8_t*)pSeg, count);
