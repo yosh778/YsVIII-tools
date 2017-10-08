@@ -136,7 +136,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				pSeg += sizeof(GENERIC_ARG);
 
-				std::cout << " ";
+				// std::cout << " ";
 			}
 
 			// std::cerr << "Switch ARG" << std::endl;
