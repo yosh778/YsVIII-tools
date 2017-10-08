@@ -25,10 +25,10 @@ enum DataTag {
 
     INT_TAG = 0x82DD,
     FLOAT_TAG = 0x82DE,
-  STRING_TAG = 0x82DF,
+    STRING_TAG = 0x82DF,
     UNK0_TAG = 0x82E0,
 
-  POPUP_TAG = 0x2020,
+    POPUP_TAG = 0x2020,
 };
 
 
