@@ -99,6 +99,9 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 	fh.read( segment, size );
 
+	std::cout << std::endl;
+	std::cout << "0x" << std::hex << (int)segHead.offset << std::dec << std::endl;
+	std::cout << segHead.name << std::endl;
 
 	char *pSeg = segment, *pEnd = segment + size;
 
