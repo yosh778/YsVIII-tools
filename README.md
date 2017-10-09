@@ -123,7 +123,7 @@ When workingon the Japanese game, add the `--enc shift-jis` argument to repack i
 
 ### Disassembler
 
-Usage : `sceneTool <script>`
+Usage : `bin2script <byteScript>`
 
 Converts a bytecode script into text.
 Credits to [weaknespase](https://github.com/weaknespase) for the [file format reverse](https://gist.github.com/weaknespase/d0a26fbc21a77616199969fe08cd48c2)
