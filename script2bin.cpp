@@ -415,28 +415,34 @@ void write_arg( std::fstream& fh, std::string arg )
 		// std::cout << "Detected s'string' arg " << content << std::endl;
 		uint32_t beg = 1;
 
-		for ( uint32_t i = beg; i < content.size(); i-- ) {
+		for ( uint32_t i = beg; i < content.size(); i++ ) {
 			
 			char elem = content[i];
 
 			if ( elem == '"' ) {
 				beg = i;
+				break;
 			}
 		}
 
-		content = content.substr( 1 ); }
+		content = content.substr( beg );
+	}
 
 	case '"': {
 		// std::cout << "Detected 'string' arg " << content << std::endl;
-		uint32_t end = 0;
+		uint32_t end = 1;
+		uint32_t i = content.size()-1;
 
-		for ( uint32_t i = content.size()-1; i > 0; i-- ) {
+		while ( i > 0 ) {
 			
 			char elem = content[i];
 
 			if ( elem == '"' ) {
 				end = i;
+				break;
 			}
+
+			i--;
 		}
 
 		content = content.substr( 1, end-1 );
@@ -445,22 +451,25 @@ void write_arg( std::fstream& fh, std::string arg )
 
 		write16( fh, STRING_TAG );
 		write32( fh, content.size() );
-		fh.write( content.c_str(), content.size() ); }
+		fh.write( content.c_str(), content.size() );
 		break;
+	}
 
 	case '#': {
 		int32_t value = std::stoi( content.substr( 1 ) );
 
 		write16( fh, INT_TAG );
-		write32( fh, value ); }
+		write32( fh, value );
 		break;
+	}
 
 	case 'f': {
 		float value = std::stof( content.substr( 1 ) );
 
 		write16( fh, FLOAT_TAG );
-		write32( fh, *(uint32_t*)&value ); }
+		write32( fh, *(uint32_t*)&value );
 		break;
+	}
 
 	case 'o': {
 		std::vector<uint8_t> values(0);
