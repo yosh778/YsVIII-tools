@@ -16,6 +16,16 @@
 #include <map>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/categories.hpp> 
+#include <boost/iostreams/code_converter.hpp>
+
+#include <boost/locale.hpp>
+
+using namespace boost::locale;
+using namespace boost::locale::conv;
 
 
 void write16(std::fstream& output, uint16_t data) {
@@ -57,6 +67,46 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 	return acc;
 }
 
+bool oShiftJis = false;
+
+// Apply encoding fixes here
+void convertText(std::string& data)
+{
+	char last = 0;
+	char elem = 0;
+	bool quoteStarts = true;
+
+	// Cancel shift-jis conversion if unneeded
+	if ( !oShiftJis )
+		return;
+
+	data = from_utf( data, "Shift-JIS" );
+
+	for ( uint32_t i = 0; i < data.size(); i++ ) {
+
+		last = elem;
+		elem = data[i];
+
+		// Fix english \" for japanese game
+		if ( last == '\\' && elem == '"' ) {
+
+			data[i-1] = 0x81;
+
+			if ( quoteStarts ) {
+				data[i] = 0x77;
+			}
+			else {
+				data[i] = 0x78;
+			}
+
+			quoteStarts = !quoteStarts;
+		}
+
+	}
+}
+
+
+
 #define write_elem(fh, elem) fh.write((char*)&elem, (int)sizeof(elem))
 
 
@@ -76,17 +126,37 @@ std::map<std::string,uint16_t> opCodeMap;
 
 int main(int argc, char *argv[])
 {
-	if ( argc < 3 ) {
-		std::cerr << "Usage : " << argv[0] << " <script> <output>" << std::endl;
+	std::string iPath;
+	std::string oPath;
+
+	for ( int i = 1; i < argc; i++ ) {
+
+		std::string arg = argv[i];
+
+		if ( arg == "--enc-shift-jis" ) {
+			std::cout << "Reencoding strings as Shift-JIS" << std::endl;
+			oShiftJis = true;
+		}
+
+		else if ( iPath.size() < 1 ) {
+			iPath = arg;
+		}
+
+		else if ( oPath.size() < 1 ) {
+			oPath = arg;
+		}
+	}
+
+	if ( argc < 3 || iPath.size() < 1 || oPath.size() < 1 ) {
+		std::cerr << "Usage : " << argv[0]
+			<< " <script> <output> (--enc-shift-jis)" << std::endl;
 		return -1;
 	}
+
 
 	for ( uint32_t i = 0; i < OPCODE_COUNT; i++ ) {
 		opCodeMap[ opCodeNames[i] ] = 0x8000 + i;
 	}
-
-	std::string iPath = argv[1];
-	std::string oPath = argv[2];
 
 	std::ifstream iFile( iPath.c_str(), std::ios_base::binary );
 
@@ -94,6 +164,15 @@ int main(int argc, char *argv[])
 		std::cerr << iPath << " not found" << std::endl;
 		return -2;
 	}
+
+	// Create output directory structure
+    boost::system::error_code returnedError;
+    boost::filesystem::path path( oPath );
+    //std::cout << path.parent_path() << std::endl;
+
+    boost::filesystem::create_directories(
+        path.parent_path(), returnedError
+    );
 
 	std::fstream oFile( oPath.c_str(), std::ios_base::trunc | std::ios_base::in | std::ios_base::out | std::ios_base::binary );
 
@@ -255,8 +334,8 @@ bool parseNextArg( std::string& arg, std::string& args )
 		return false;
 
 	bool inString = false;
-	char beforeLast;
-	char last;
+	char beforeLast = 0;
+	char last = 0;
 	char elem = args[beg];
 
 	// Look for arg end, ignore string contents
@@ -274,7 +353,7 @@ bool parseNextArg( std::string& arg, std::string& args )
 					inString = true;
 				}
 			}
-			else if ( last != '\\' && (last != 0x77 || beforeLast != 0x81) ) {
+			else if ( last != '\\' && ((last != 0x77 && last != 0x78) || beforeLast != 0x81) ) {
 
 				for ( uint32_t j = i+1; j < args.size(); j++ ) {
 
@@ -314,47 +393,70 @@ bool parseNextArg( std::string& arg, std::string& args )
 
 bool parsePopup( std::vector<uint32_t>& args, std::string& text, std::string data )
 {
-	int posOpenBracket = data.find("(");
-	int posColon = data.find(":");
 
-	if ( posOpenBracket == std::string::npos )
-		return false;
+	size_t strPos = data.find("\"");
 
-	int argPos = (posColon == std::string::npos) ? posColon : posColon;
+	if ( strPos == std::string::npos ) {
+		std::cerr << "ERROR : invalid popup argument (no string found)" << std::endl;
+		exit(1);
+	}
+
+	size_t posOpenBracket = data.find("(");
+	size_t posColon = data.find(":");
+
+	if ( posOpenBracket == std::string::npos ) {
+		std::cerr << "ERROR : invalid popup argument (no options found)" << std::endl;
+		exit(1);
+	}
+
+	if ( posColon > strPos ) {
+		posColon = std::string::npos;
+	}
+
+	size_t argPos = (posColon == std::string::npos) ? posOpenBracket : posColon;
 	argPos++;
 
-	int strPos = data.find("\"");
-
-	if ( strPos == std::string::npos )
-		return false;
-
 	std::vector<std::string> elems;
-	std::string content = data.substr( argPos, strPos-1-argPos );
+	std::string content = data.substr( argPos, strPos-argPos );
 	boost::split( elems, content, boost::is_any_of(";") );
 
-	for ( uint32_t i = 0; i < elems.size(); i++ ) {
+	for ( uint32_t i = 0; i < elems.size()-1; i++ ) {
 		
 		std::string& elem = elems[i];
 		boost::trim(elem);
 
 		if ( elem.size() < 1 ) {
-			continue;
+			std::cerr << "ERROR : empty popup argument" << std::endl;
+			exit(1);
 		}
 
 		// std::cout << "Converting to int : " << elem << std::endl;
-		int value = std::stoi(elem);
+		int value;
+
+		try {
+			value = std::stoi(elem);
+
+		} catch ( ... ) {
+			std::cerr << "ERROR : failed to parse integer '" << elem << "'" << std::endl;
+			exit(1);
+		}
+
 		// std::cout << "Result : " << value << std::endl;
 		args.push_back( value );
 	}
 
 	text = data.substr( strPos+1 );
 
-	int strEnd = text.rfind("\"");
+	// int strEnd = strrchr( text.c_str(), '\"' ) - text.c_str();
+	size_t strEnd = text.rfind('\"');
 
-	if ( strEnd == std::string::npos || strEnd == strPos )
-		return false;
+	if ( strEnd == std::string::npos ) {
+		std::cerr << "ERROR : failed to parse popup '" << data << "' of size : " << data.size() << std::endl;
+		exit(2);
+	}
 
 	text = text.substr( 0, strEnd );
+	// std::cout << "popupText : " << text << std::endl;
 
 	return true;
 }
@@ -447,6 +549,8 @@ void write_arg( std::fstream& fh, std::string arg )
 
 		content = content.substr( 1, end-1 );
 
+		convertText(content);
+
 		// std::cout << "Writing string " << content << std::endl;
 
 		write16( fh, STRING_TAG );
@@ -486,6 +590,8 @@ void write_arg( std::fstream& fh, std::string arg )
 		std::string text;
 		std::vector<uint32_t> args(0);
 		parsePopup( args, text, content.substr(5) );
+
+		convertText(text);
 
 		write16( fh, POPUP_TAG );
 		write32( fh, args.size() );

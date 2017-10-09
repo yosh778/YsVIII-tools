@@ -42,7 +42,7 @@ else
 endif
 
 IFLAGS=-I"${INC}"
-LFLAGS=-L"${LIB}" -lboost_system${LSUFFIX} -lboost_filesystem${LSUFFIX}
+LFLAGS=-L"${LIB}" -lboost_system${LSUFFIX} -lboost_filesystem${LSUFFIX} -lboost_locale${LSUFFIX}
 
 all: xai unxai dat undat plt unplt xaiPatch bin2script script2bin
 
@@ -68,10 +68,10 @@ xaiPatch: xaiPatch.cpp
 	g++ ${CCFLAGS} -o $@ $<
 
 bin2script: bin2script.cpp sceneTool.hh sceneOpCodes.hh sceneOpCodeNames.hh
-	g++ ${CCFLAGS} -fpermissive -o $@ $<
+	g++ ${CCFLAGS} -fpermissive -o $@ $< ${IFLAGS} ${LFLAGS}
 
 script2bin: script2bin.cpp sceneTool.hh sceneOpCodes.hh sceneOpCodeNames.hh
-	g++ ${CCFLAGS} -fpermissive -o $@ $<
+	g++ ${CCFLAGS} -fpermissive -o $@ $< ${IFLAGS} ${LFLAGS}
 
 
 clean:
