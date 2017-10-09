@@ -58,7 +58,7 @@ void print_hex(uint8_t *data, uint32_t size)
 int main(int argc, char *argv[])
 {
 	if ( argc < 2 ) {
-		std::cerr << "Usage : " << argv[0] << " <script>" << std::endl;
+		std::cerr << "Usage : " << argv[0] << " <byteScript>" << std::endl;
 		return -1;
 	}
 

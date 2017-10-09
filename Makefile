@@ -44,7 +44,7 @@ endif
 IFLAGS=-I"${INC}"
 LFLAGS=-L"${LIB}" -lboost_system${LSUFFIX} -lboost_filesystem${LSUFFIX}
 
-all: xai unxai dat undat plt unplt xaiPatch sceneTool
+all: xai unxai dat undat plt unplt xaiPatch bin2script script2bin
 
 xai: xai.cpp
 	g++ ${CCFLAGS} -o $@ $< ${IFLAGS} ${LFLAGS}
@@ -67,7 +67,10 @@ unplt: unplt.cpp
 xaiPatch: xaiPatch.cpp
 	g++ ${CCFLAGS} -o $@ $<
 
-sceneTool: sceneTool.cpp sceneTool.hh sceneOpCodes.hh sceneOpCodeNames.hh
+bin2script: bin2script.cpp sceneTool.hh sceneOpCodes.hh sceneOpCodeNames.hh
+	g++ ${CCFLAGS} -fpermissive -o $@ $<
+
+script2bin: script2bin.cpp sceneTool.hh sceneOpCodes.hh sceneOpCodeNames.hh
 	g++ ${CCFLAGS} -fpermissive -o $@ $<
 
 
@@ -76,4 +79,4 @@ clean:
 	rm undat dat -f
 	rm unplt plt -f
 	rm xaiPatch -f
-	rm sceneTool -f
+	rm bin2script -f
