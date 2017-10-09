@@ -391,4 +391,5 @@ const char *opCodeNames[] = {
   "GetTrophyDirect",
   "DelMapMarkerAll",
   "DelSkillNewMark",
+  "0x8182",
 };

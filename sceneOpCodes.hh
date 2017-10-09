@@ -390,4 +390,7 @@ enum OpCode {
   OPCODE_GetTrophyDirect = 0x817F,
   OPCODE_DelMapMarkerAll = 0x8180,
   OPCODE_DelSkillNewMark = 0x8181,
+  OPCODE_8182 = 0x8182,
+
+  OPCODE_COUNT = 0x183
 };
