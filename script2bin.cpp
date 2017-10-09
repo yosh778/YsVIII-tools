@@ -312,7 +312,54 @@ bool parseNextArg( std::string& arg, std::string& args )
 	return ret;
 }
 
-bool parseHex(std::vector<uint8_t>& values, std::string data )
+bool parsePopup( std::vector<uint32_t>& args, std::string& text, std::string data )
+{
+	int posOpenBracket = data.find("(");
+	int posColon = data.find(":");
+
+	if ( posOpenBracket == std::string::npos )
+		return false;
+
+	int argPos = (posColon == std::string::npos) ? posColon : posColon;
+	argPos++;
+
+	int strPos = data.find("\"");
+
+	if ( strPos == std::string::npos )
+		return false;
+
+	std::vector<std::string> elems;
+	std::string content = data.substr( argPos, strPos-1-argPos );
+	boost::split( elems, content, boost::is_any_of(";") );
+
+	for ( uint32_t i = 0; i < elems.size(); i++ ) {
+		
+		std::string& elem = elems[i];
+		boost::trim(elem);
+
+		if ( elem.size() < 1 ) {
+			continue;
+		}
+
+		// std::cout << "Converting to int : " << elem << std::endl;
+		int value = std::stoi(elem);
+		// std::cout << "Result : " << value << std::endl;
+		args.push_back( value );
+	}
+
+	text = data.substr( strPos+1 );
+
+	int strEnd = text.rfind("\"");
+
+	if ( strEnd == std::string::npos || strEnd == strPos )
+		return false;
+
+	text = text.substr( 0, strEnd );
+
+	return true;
+}
+
+bool parseHex( std::vector<uint8_t>& values, std::string data )
 {
 	char buf[3];
 	// int hex = 0;
@@ -391,6 +438,7 @@ void write_arg( std::fstream& fh, std::string arg )
 				end = i;
 			}
 		}
+
 		content = content.substr( 1, end-1 );
 
 		// std::cout << "Writing string " << content << std::endl;
@@ -420,11 +468,27 @@ void write_arg( std::fstream& fh, std::string arg )
 
 		write16( fh, UNK0_TAG );
 		write32( fh, values.size() );
-		fh.write( (char*)values.data(), values.size() ); }
+		fh.write( (char*)values.data(), values.size() );
 		break;
+	}
 
-	case 'p':
+	case 'p': {
+		std::string text;
+		std::vector<uint32_t> args(0);
+		parsePopup( args, text, content.substr(5) );
+
+		write16( fh, POPUP_TAG );
+		write32( fh, args.size() );
+		write32( fh, text.size() );
+
+		// for ( uint32_t i = 0; i < args.size(); i++ ) {
+		// 	write32( fh, args[i] );
+		// }
+
+		fh.write( (char*)args.data(), args.size() * sizeof(uint32_t) );
+		fh.write( text.c_str(), text.size() );
 		break;
+	}
 
 	default:
 		std::cerr << "ERROR : unrecognized parameter '" << content << "'" << std::endl;
