@@ -464,10 +464,11 @@ void write_arg( std::fstream& fh, std::string arg )
 	}
 
 	case 'f': {
-		float value = std::stof( content.substr( 1 ) );
+		// float value = std::stof( content.substr( 1 ) );
+		uint32_t value = std::stoul( content.substr(2), nullptr, 16 );
 
 		write16( fh, FLOAT_TAG );
-		write32( fh, *(uint32_t*)&value );
+		write32( fh, *(uint32_t*)&value ); // float writing trick
 		break;
 	}
 

@@ -202,7 +202,9 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				break;
 
 			case FLOAT_TAG:
-				std::cout << ", f" << arg.fVal;
+				// std::cout << ", f" << arg.fVal;
+				std::cout << ", fx" << std::hex << arg.uVal << std::dec;
+				std::cout << " (~" << arg.fVal << ")";
 				break;
 
 			case STRING_TAG: {
