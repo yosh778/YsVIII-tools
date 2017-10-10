@@ -129,6 +129,14 @@ Converts a bytecode script into text.
 Credits to [weaknespase](https://github.com/weaknespase) for the [file format reverse](https://gist.github.com/weaknespase/d0a26fbc21a77616199969fe08cd48c2)
 
 
+### Assembler
+
+Usage : `script2bin <script> <output> (--enc-shift-jis)`
+
+Converts a script back into bytecode.
+Add `--enc-shift-jis` to convert game text strings back into shift-jis.
+
+
 # Credits
 
 - Tony Blue for helping get the game on 3.60
