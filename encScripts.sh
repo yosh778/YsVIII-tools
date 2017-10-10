@@ -77,12 +77,13 @@ done
 
 mv "${PREV}_enc" "$DIR"
 
-cp -f "$DIR"/sceneFixes_enc/mp4102t2.bin "$DIR"/eng_enc/base/mp4102t2.bin
-cp -f "$DIR"/sceneFixes_enc/mp1103.bin "$DIR"/eng_enc/patch101/mp1103.bin
+cp -f "$DIR"/sceneFixes_enc/mp4102t2.bin "$DIR"/eng_enc/base/script/mp4102t2.bin
+cp -f "$DIR"/sceneFixes_enc/mp1103.bin "$DIR"/patch102_eng_enc/script/mp1103.bin
 
 
 rm -rf "$DIR"/eng_enc/text_fr/ "$DIR"/eng_enc/patch102_fake
 
 mv "$DIR"/eng_enc/* "$DIR"
+mv "$DIR"/base "$DIR"/rootast
 rmdir "$DIR"/eng_enc
 

@@ -68,6 +68,7 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 }
 
 bool oShiftJis = false;
+bool iShiftJis = false;
 
 // Apply encoding fixes here
 void convertText(std::string& data)
@@ -76,9 +77,16 @@ void convertText(std::string& data)
 	char elem = 0;
 	bool quoteStarts = true;
 
-	// Cancel shift-jis conversion if unneeded
-	if ( !oShiftJis )
+	// Convert from Shift-JIS to UTF-8 if needed
+	if ( iShiftJis ) {
+		data = to_utf<char>( data, "Shift-JIS" );
 		return;
+	}
+
+	// Cancel UTF-8 to Shift-JIS conversion if unneeded
+	if ( !oShiftJis ) {
+		return;
+	}
 
 	data = from_utf( data, "Shift-JIS" );
 
@@ -138,6 +146,11 @@ int main(int argc, char *argv[])
 			oShiftJis = true;
 		}
 
+		else if ( arg == "--dec-shift-jis" ) {
+			std::cout << "Decoding strings as Shift-JIS" << std::endl;
+			iShiftJis = true;
+		}
+
 		else if ( iPath.size() < 1 ) {
 			iPath = arg;
 		}
@@ -147,9 +160,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if ( iShiftJis && oShiftJis ) {
+		iShiftJis = false;
+		oShiftJis = false;
+	}
+
 	if ( argc < 3 || iPath.size() < 1 || oPath.size() < 1 ) {
 		std::cerr << "Usage : " << argv[0]
-			<< " <script> <output> (--enc-shift-jis)" << std::endl;
+			<< " <script> <output> (--dec-shift-jis) (--enc-shift-jis)" << std::endl;
 		return -1;
 	}
 
