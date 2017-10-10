@@ -500,7 +500,7 @@ bool parseHex( std::vector<uint8_t>& values, std::string data )
 	return true;
 }
 
-void write_arg( std::fstream& fh, std::string arg )
+void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 {
 	boost::trim(arg);
 
@@ -549,7 +549,14 @@ void write_arg( std::fstream& fh, std::string arg )
 
 		content = content.substr( 1, end-1 );
 
-		convertText(content);
+		if (   opcode == OPCODE_MenuAdd
+			|| opcode == OPCODE_YesNoMenu
+			|| opcode == OPCODE_GetItemMessageExPlus
+			|| opcode == OPCODE_Message
+			 ) {
+
+			convertText(content);
+		}
 
 		// std::cout << "Writing string " << content << std::endl;
 
@@ -664,7 +671,7 @@ void write_segment(
 		while ( parseNextArg( arg, args ) ) {
 
 			// std::cout << "Next arg : " << arg << std::endl;
-			write_arg( fh, arg );
+			write_arg( fh, arg, opcode );
 		}
 
 	}
