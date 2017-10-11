@@ -199,6 +199,8 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 			case INT_TAG:
 				std::cout << ", #" << arg.iVal;
+				std::cout << " (@ 0x" << std::hex << std::setfill('0') << std::setw(4)
+							<< ((pSeg - segment) + arg.iVal) << std::dec << ")";
 				break;
 
 			case FLOAT_TAG:

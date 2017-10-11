@@ -571,6 +571,7 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 			|| opcode == OPCODE_YesNoMenu
 			|| opcode == OPCODE_GetItemMessageExPlus
 			|| opcode == OPCODE_Message
+			// TalkMes
 			 ) {
 
 			convertText(content);
