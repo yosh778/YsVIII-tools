@@ -136,6 +136,10 @@ Usage : `script2bin <script> <output> (--enc-shift-jis)`
 Converts a script back into bytecode.
 Add `--enc-shift-jis` to convert game text strings back into shift-jis.
 
+### RPN arithmetics
+
+More information about the RPN arithmetic arguments used in conditions & calculations can be found here : https://gist.github.com/yosh778/141f78102cbcb15673b2375002e52a76
+
 
 # Credits
 
