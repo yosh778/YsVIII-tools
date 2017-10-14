@@ -253,6 +253,13 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				// TODO : find unambiguous string delimiters
 				std::cout << data << "\"";
+				std::cout << " (";
+
+				for (uint32_t i = 0; i < nLines; i++) {
+					std::cout << " " << args[i];
+				}
+				std::cout << " )";
+
 				// std::cout << data << "\" )";
 				break;
 			}

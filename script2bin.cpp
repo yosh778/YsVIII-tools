@@ -550,15 +550,15 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 
 		content = content.substr( 1, end-1 );
 
-		if (   opcode == OPCODE_MenuAdd
-			|| opcode == OPCODE_YesNoMenu
-			|| opcode == OPCODE_GetItemMessageExPlus
-			|| opcode == OPCODE_Message
-			// TalkMes
-			 ) {
+		// if (   opcode == OPCODE_MenuAdd
+		// 	|| opcode == OPCODE_YesNoMenu
+		// 	|| opcode == OPCODE_GetItemMessageExPlus
+		// 	|| opcode == OPCODE_Message
+		// 	// TalkMes
+		// 	 ) {
 
-			convertText(content);
-		}
+			// convertText(content);
+		// }
 
 		// std::cout << "Writing string " << content << std::endl;
 
@@ -598,10 +598,11 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 	case 'p': {
 		std::string text;
 		std::vector<uint32_t> args(0);
+
+		convertText(content);
+
 		// parsePopup( args, text, content.substr(5) );
 		parsePopup( args, text, content.substr(1) );
-
-		convertText(text);
 
 		write16( fh, POPUP_TAG );
 		write32( fh, args.size() );
