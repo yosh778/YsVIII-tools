@@ -122,13 +122,21 @@ void convertText(std::string& text)
 	if ( diff < 0 ) {
 		diff = -diff;
 
+		bool soh = false;
+
+		if ( data.size() > 0 && data[data.size()-1] == '\x01' )
+			data = data.substr(0, data.size()-1), soh = true;
+
 		for ( int i = 0; i < diff; i++ )
 			data += " ";
+
+		if ( soh )
+			data += "\x01";
 	}
 
-	data = data.substr(0, iSize);
+	text = data.substr(0, iSize);
 
-	if ( data.size() != iSize ) {
+	if ( text.size() != iSize ) {
 		std::cerr << "ERROR : a text fitting error occurred" << std::endl;
 		exit(1);
 	}
@@ -541,7 +549,7 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 		// 	// TalkMes
 		// 	 ) {
 
-			// convertText(content);
+			convertText(content);
 		// }
 
 		// std::cout << "Writing string " << content << std::endl;

@@ -40,7 +40,7 @@ cp -f custom/pl_const.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
 cp -f custom/mp1103.bin $PATCH_102_FIX_DIR/script/mp1103.bin
 
 
-./script2bin custom/item_test.ys custom/item.bin > /dev/null
+./script2bin custom/item_test.ys custom/item.bin --enc-shift-jis > /dev/null
 ./script2bin custom/talk.ys custom/talk.bin --enc-shift-jis > /dev/null
 # ./script2bin custom/talk.ys custom/talk.bin > /dev/null
 
