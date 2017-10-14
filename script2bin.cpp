@@ -71,16 +71,17 @@ bool oShiftJis = false;
 bool iShiftJis = false;
 
 // Apply encoding fixes here
-void convertText(std::string& data)
+void convertText(std::string& text)
 {
 	char last = 0;
 	char elem = 0;
 	bool quoteStarts = true;
+	std::string data;
 
 	// Convert from Shift-JIS to UTF-8 if needed
 	if ( iShiftJis ) {
-		data = to_utf<char>( data, "Shift-JIS" );
-		return;
+		data = to_utf<char>( text, "Shift-JIS" );
+		goto end;
 	}
 
 	// Cancel UTF-8 to Shift-JIS conversion if unneeded
@@ -88,7 +89,7 @@ void convertText(std::string& data)
 		return;
 	}
 
-	data = from_utf( data, "Shift-JIS" );
+	data = from_utf( text, "Shift-JIS" );
 
 	for ( uint32_t i = 0; i < data.size(); i++ ) {
 
@@ -110,6 +111,26 @@ void convertText(std::string& data)
 			quoteStarts = !quoteStarts;
 		}
 
+	}
+
+	end:
+
+	int oSize = data.size();
+	int iSize = text.size();
+	int diff = oSize - iSize;
+
+	if ( diff < 0 ) {
+		diff = -diff;
+
+		for ( int i = 0; i < diff; i++ )
+			data += " ";
+	}
+
+	data = data.substr(0, iSize);
+
+	if ( data.size() != iSize ) {
+		std::cerr << "ERROR : a text fitting error occurred" << std::endl;
+		exit(1);
 	}
 }
 
@@ -409,49 +430,12 @@ bool parseNextArg( std::string& arg, std::string& args )
 	return ret;
 }
 
-bool parsePopup( std::vector<uint32_t>& args, std::string& text, std::string data )
+bool parsePopup( std::vector<uint32_t>& args, std::string& data )
 {
-	size_t strPos = data.find("\"");
-
-	if ( strPos == std::string::npos ) {
-		std::cerr << "ERROR : invalid popup argument (no string found)" << std::endl;
-		exit(1);
-	}
-
-	// size_t posOpenBracket = data.find("(");
-	// size_t posColon = data.find(":");
-
-	// if ( posOpenBracket == std::string::npos ) {
-	// 	std::cerr << "ERROR : invalid popup argument (no options found)" << std::endl;
-	// 	exit(1);
-	// }
-
-	// if ( posColon > strPos ) {
-	// 	posColon = std::string::npos;
-	// }
-
-	// size_t argPos = (posColon == std::string::npos) ? posOpenBracket : posColon;
-	// argPos++;
-
-	// std::vector<std::string> elems;
-	// std::string content = data.substr( argPos, strPos-argPos );
-	// boost::split( elems, content, boost::is_any_of(";") );
-	std::vector<std::string> elems;
-	std::string content = data.substr( strPos+1 );
-
-	size_t strEnd = content.rfind('\"');
-
-	if ( strEnd == std::string::npos ) {
-		std::cerr << "ERROR : failed to parse popup '" << data << "' of size : " << data.size() << std::endl;
-		exit(2);
-	}
-
-	text = content.substr( 0, strEnd );
-
 	uint32_t start = 0;
 
-	for ( uint32_t i = 0; i < content.size(); i++ ) {
-		char elem = content[i];
+	for ( uint32_t i = 0; i < data.size(); i++ ) {
+		char elem = data[i];
 
 		if ( elem == '\x01' ) {
 			args.push_back( start );
@@ -599,10 +583,30 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 		std::string text;
 		std::vector<uint32_t> args(0);
 
-		convertText(content);
+		content = content.substr(1);
+
+		size_t strPos = content.find("\"");
+
+		if ( strPos == std::string::npos ) {
+			std::cerr << "ERROR : invalid popup argument (no string found)" << std::endl;
+			exit(1);
+		}
+
+		content = content.substr( strPos+1 );
+
+		size_t strEnd = content.rfind('\"');
+
+		if ( strEnd == std::string::npos ) {
+			std::cerr << "ERROR : failed to parse popup '" << content << "' of size : " << content.size() << std::endl;
+			exit(2);
+		}
+
+		text = content.substr( 0, strEnd );
+
+		convertText(text);
 
 		// parsePopup( args, text, content.substr(5) );
-		parsePopup( args, text, content.substr(1) );
+		parsePopup( args, text );
 
 		write16( fh, POPUP_TAG );
 		write32( fh, args.size() );
