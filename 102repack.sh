@@ -39,7 +39,15 @@ cp -f custom/pl_const.plt $PATCH_102_FIX_DIR/flash/pl_const.plt
 
 cp -f custom/mp1103.bin $PATCH_102_FIX_DIR/script/mp1103.bin
 
+
+./script2bin custom/item_test.ys custom/item.bin > /dev/null
+./script2bin custom/talk.ys custom/talk.bin > /dev/null
+
+#cp -f custom/item_fix.bin custom/item.bin
+
+
 cp -f custom/item.bin $DAT_FIX_DIR
+cp -f custom/talk.bin $DAT_FIX_DIR
 
 # mkdir -p tbb
 # ./swap.sh $TBB_LIST $DAT_ENG_DIR tbb > /dev/null

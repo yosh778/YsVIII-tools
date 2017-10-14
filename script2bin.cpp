@@ -367,7 +367,7 @@ bool parseNextArg( std::string& arg, std::string& args )
 
 			if ( !inString ) {
 
-				if ( last == ' ' || last == ',' || last == 's' ) {
+				if ( last == ' ' || last == ',' || last == 's' || last == 'p' ) {
 					inString = true;
 				}
 			}
@@ -411,7 +411,6 @@ bool parseNextArg( std::string& arg, std::string& args )
 
 bool parsePopup( std::vector<uint32_t>& args, std::string& text, std::string data )
 {
-
 	size_t strPos = data.find("\"");
 
 	if ( strPos == std::string::npos ) {
@@ -419,62 +418,46 @@ bool parsePopup( std::vector<uint32_t>& args, std::string& text, std::string dat
 		exit(1);
 	}
 
-	size_t posOpenBracket = data.find("(");
-	size_t posColon = data.find(":");
+	// size_t posOpenBracket = data.find("(");
+	// size_t posColon = data.find(":");
 
-	if ( posOpenBracket == std::string::npos ) {
-		std::cerr << "ERROR : invalid popup argument (no options found)" << std::endl;
-		exit(1);
-	}
+	// if ( posOpenBracket == std::string::npos ) {
+	// 	std::cerr << "ERROR : invalid popup argument (no options found)" << std::endl;
+	// 	exit(1);
+	// }
 
-	if ( posColon > strPos ) {
-		posColon = std::string::npos;
-	}
+	// if ( posColon > strPos ) {
+	// 	posColon = std::string::npos;
+	// }
 
-	size_t argPos = (posColon == std::string::npos) ? posOpenBracket : posColon;
-	argPos++;
+	// size_t argPos = (posColon == std::string::npos) ? posOpenBracket : posColon;
+	// argPos++;
 
+	// std::vector<std::string> elems;
+	// std::string content = data.substr( argPos, strPos-argPos );
+	// boost::split( elems, content, boost::is_any_of(";") );
 	std::vector<std::string> elems;
-	std::string content = data.substr( argPos, strPos-argPos );
-	boost::split( elems, content, boost::is_any_of(";") );
+	std::string content = data.substr( strPos+1 );
 
-	for ( uint32_t i = 0; i < elems.size()-1; i++ ) {
-		
-		std::string& elem = elems[i];
-		boost::trim(elem);
-
-		if ( elem.size() < 1 ) {
-			std::cerr << "ERROR : empty popup argument" << std::endl;
-			exit(1);
-		}
-
-		// std::cout << "Converting to int : " << elem << std::endl;
-		int value;
-
-		try {
-			value = std::stoi(elem);
-
-		} catch ( ... ) {
-			std::cerr << "ERROR : failed to parse integer '" << elem << "'" << std::endl;
-			exit(1);
-		}
-
-		// std::cout << "Result : " << value << std::endl;
-		args.push_back( value );
-	}
-
-	text = data.substr( strPos+1 );
-
-	// int strEnd = strrchr( text.c_str(), '\"' ) - text.c_str();
-	size_t strEnd = text.rfind('\"');
+	size_t strEnd = content.rfind('\"');
 
 	if ( strEnd == std::string::npos ) {
 		std::cerr << "ERROR : failed to parse popup '" << data << "' of size : " << data.size() << std::endl;
 		exit(2);
 	}
 
-	text = text.substr( 0, strEnd );
-	// std::cout << "popupText : " << text << std::endl;
+	text = content.substr( 0, strEnd );
+
+	uint32_t start = 0;
+
+	for ( uint32_t i = 0; i < content.size(); i++ ) {
+		char elem = content[i];
+
+		if ( elem == '\x01' ) {
+			args.push_back( start );
+			start = i+1;
+		}
+	}
 
 	return true;
 }
@@ -615,7 +598,8 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 	case 'p': {
 		std::string text;
 		std::vector<uint32_t> args(0);
-		parsePopup( args, text, content.substr(5) );
+		// parsePopup( args, text, content.substr(5) );
+		parsePopup( args, text, content.substr(1) );
 
 		convertText(text);
 

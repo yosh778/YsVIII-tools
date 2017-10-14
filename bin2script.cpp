@@ -226,7 +226,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 			case POPUP_TAG: {
 				// std::cout << ", popup (" << arg.uVal << ":";
-				std::cout << ", popup (";
+				std::cout << ", p";
 
 				POPUP_ARG popup = *(POPUP_ARG*)pArg;
 				uint32_t nLines = popup.nLines;
@@ -239,10 +239,11 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 					args[i] = *((uint32_t*)pSeg);
 					pSeg += sizeof(uint32_t);
 
-					std::cout << " " << args[i] << " ;";
+					// std::cout << " " << args[i] << " ;";
 				}
 
-				std::cout << " \"";
+				// std::cout << " \"";
+				std::cout << "\"";
 
 				char data[len+1];
 
@@ -251,8 +252,10 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg += len;
 
 				// TODO : find unambiguous string delimiters
-				std::cout << data << "\" )"; }
+				std::cout << data << "\"";
+				// std::cout << data << "\" )";
 				break;
+			}
 
 			case UNK0_TAG: {
 				std::cout << ", o";

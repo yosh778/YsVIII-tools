@@ -14,4 +14,6 @@ cp -f patch102_fix_ch.xai $DIR/app/PCSH00297/patch102.xai
 ./patchEboot.py $DIR/app/PCSH00297/mai_moe/eboot_origin.bin
 
 
+echo "Unmounting '${DIR}', please wait ..."
+
 umount $DIR -v
