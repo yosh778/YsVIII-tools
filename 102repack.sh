@@ -47,7 +47,7 @@ cp -f custom/mp1103.bin $PATCH_102_FIX_DIR/script/mp1103.bin
 #cp -f custom/item_fix.bin custom/item.bin
 
 
-# cp -f custom/item.bin $DAT_FIX_DIR
+ cp -f custom/item.bin $DAT_FIX_DIR
  cp -f custom/talk.bin $DAT_FIX_DIR
 
 # mkdir -p tbb

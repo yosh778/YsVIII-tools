@@ -20,6 +20,8 @@ for path in eng/*/script/*; do
         NEXT="${path#*/}"
         DEST="${PREV}_enc/${NEXT}"
         ./script2bin tmp "$DEST" --enc-shift-jis > /dev/null
+        # ./bin2script "$DEST" > mm 2>err
+        # ./script2bin mm nn > /dev/null
         # echo $path
     fi
 done

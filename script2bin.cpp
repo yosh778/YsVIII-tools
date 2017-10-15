@@ -99,15 +99,15 @@ void convertText(std::string& text)
 		// Fix english \" for japanese game
 		if ( last == '\\' && elem == '"' ) {
 
-			data[i-1] = 0x81;
+			// data[i-1] = 0x81;
 
-			if ( quoteStarts ) {
-				data[i] = 0x77;
-			}
-			else {
-				data[i] = 0x78;
-			}
-
+			// if ( quoteStarts ) {
+			// 	data[i] = 0x77;
+			// }
+			// else {
+			// 	data[i] = 0x78;
+			// }
+			data = data.substr(0, i-1) + "\"" + data.substr(i+1);
 			quoteStarts = !quoteStarts;
 		}
 
@@ -129,6 +129,18 @@ void convertText(std::string& text)
 
 		for ( int i = 0; i < diff; i++ )
 			data += " ";
+
+		if ( soh )
+			data += "\x01";
+	}
+	else if ( diff > 0 ) {
+
+		bool soh = false;
+
+		if ( data.size() > 0 && data[data.size()-1] == '\x01' )
+			data = data.substr(0, data.size()-1), soh = true;
+
+		data = data.substr(0, data.size()-diff);
 
 		if ( soh )
 			data += "\x01";
