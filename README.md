@@ -138,7 +138,9 @@ Add `--enc-shift-jis` to convert game text strings back into shift-jis.
 
 ### RPN arithmetics
 
-More information about the RPN arithmetic arguments used in conditions & calculations can be found here : https://gist.github.com/yosh778/141f78102cbcb15673b2375002e52a76
+More information about the RPN arithmetic arguments used in conditions & calculations can be found here : https://gist.github.com/weaknespase/d0a26fbc21a77616199969fe08cd48c2
+
+You can also find here my first write-up about it : https://gist.github.com/yosh778/141f78102cbcb15673b2375002e52a76
 
 
 # Credits
