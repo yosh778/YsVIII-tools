@@ -200,6 +200,11 @@ int main(int argc, char *argv[])
 			iShiftJis = true;
 		}
 
+		else if ( arg == "--preserve-string-sizes" ) {
+			std::cout << "Preserving string sizes" << std::endl;
+			keepStringSizes = true;
+		}
+
 		else if ( iPath.size() < 1 ) {
 			iPath = arg;
 		}
@@ -216,7 +221,7 @@ int main(int argc, char *argv[])
 
 	if ( argc < 3 || iPath.size() < 1 || oPath.size() < 1 ) {
 		std::cerr << "Usage : " << argv[0]
-			<< " <script> <output> (--dec-shift-jis) (--enc-shift-jis)" << std::endl;
+			<< " <script> <output> (--dec-shift-jis) (--enc-shift-jis) (--preserve-string-sizes)" << std::endl;
 		return -1;
 	}
 
