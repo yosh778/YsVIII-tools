@@ -787,7 +787,7 @@ void write_segment(
 		fh.seekp( jmp.first - 4 );
 		write32( fh, labelMap[ jmp.second ] - jmp.first );
 		// std::cerr << "setting jmp @offset 0x" << std::hex << (jmp.first-4 - segHead.offset)
-			// << " to @0x" << (int)(labelMap[ jmp.second ] - segHead.offset) << std::dec << std::endl;
+		// 	<< " to @0x" << (int)(labelMap[ jmp.second ] - segHead.offset) << std::dec << std::endl;
 	}
 
 	fh.seekp(pos);
