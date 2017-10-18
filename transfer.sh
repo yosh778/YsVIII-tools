@@ -25,5 +25,4 @@ cp -f patch102_fix.xai $DIR/app/PCSG00881/patch102.xai
 
 
 echo "Unmounting '${DIR}', please wait ..."
-
 umount $DIR -v

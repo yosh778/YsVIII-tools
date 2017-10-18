@@ -80,3 +80,4 @@ clean:
 	rm unplt plt -f
 	rm xaiPatch -f
 	rm bin2script -f
+	rm script2bin -f

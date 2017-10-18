@@ -55,15 +55,32 @@ void print_hex(uint8_t *data, uint32_t size)
 	}
 }
 
+bool minimize = false;
+
 
 int main(int argc, char *argv[])
 {
-	if ( argc < 2 ) {
-		std::cerr << "Usage : " << argv[0] << " <byteScript>" << std::endl;
-		return -1;
+	std::string iPath;
+
+	for ( int i = 1; i < argc; i++ ) {
+
+		std::string arg = argv[i];
+
+		if ( arg == "-m" ) {
+			std::cerr << "Minimizing output" << std::endl;
+			minimize = true;
+		}
+
+		else if ( iPath.size() < 1 ) {
+			iPath = arg;
+		}
 	}
 
-	std::string iPath = argv[1];
+	if ( argc < 2 || iPath.size() < 1 ) {
+		std::cerr << "Usage : " << argv[0]
+			<< " <byteScript> (-m)" << std::endl;
+		return -1;
+	}
 
 	std::ifstream iFile( iPath.c_str(), std::ios_base::binary );
 
@@ -160,9 +177,13 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			std::cout << " / label" << index;
 		}
 
-		std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
-			<< (int)(pSeg - segment) << ": "
-			<< std::dec;
+		std::cout << std::endl;
+
+		if ( !minimize ) {
+			std::cout << "0x" << std::hex << std::setfill('0') << std::setw(4)
+				<< (int)(pSeg - segment) << ": "
+				<< std::dec;
+		}
 
 		const uint32_t curOffset = (unsigned int)(pSeg - segment);
 
@@ -245,8 +266,11 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 			case INT_TAG:
 				std::cout << ", #" << arg.iVal;
-				std::cout << " (@ 0x" << std::hex << std::setfill('0') << std::setw(4)
+
+				if ( !minimize ) {
+					std::cout << " (@ 0x" << std::hex << std::setfill('0') << std::setw(4)
 							<< ((pSeg - segment) + arg.iVal) << std::dec << ")";
+				}
 				break;
 
 			case FLOAT_TAG:

@@ -19,9 +19,9 @@ for path in eng/*/script/*; do
         PREV="${path%%/*}"
         NEXT="${path#*/}"
         DEST="${PREV}_enc/${NEXT}"
-        ./script2bin tmp "$DEST" --enc-shift-jis > /dev/null
+        ./script2bin --change-string-sizes tmp "$DEST" --enc-shift-jis > /dev/null
         # ./bin2script "$DEST" > mm 2>err
-        # ./script2bin mm nn > /dev/null
+        # ./script2bin --change-string-sizes mm nn > /dev/null
         # echo $path
     fi
 done
@@ -38,7 +38,7 @@ for path in 1stload_allEng_script/*; do
         PREV="${path%%/*}"
         NEXT="${path#*/}"
         DEST="${PREV}_enc/${NEXT}"
-        ./script2bin tmp "$DEST" --enc-shift-jis > /dev/null
+        ./script2bin --change-string-sizes tmp "$DEST" --enc-shift-jis > /dev/null
         # echo $path
     fi
 done
@@ -55,7 +55,7 @@ for path in patch102_eng/script/*; do
         PREV="${path%%/*}"
         NEXT="${path#*/}"
         DEST="${PREV}_enc/${NEXT}"
-        ./script2bin tmp "$DEST" --enc-shift-jis > /dev/null
+        ./script2bin --change-string-sizes tmp "$DEST" --enc-shift-jis > /dev/null
         # echo $path
     fi
 done
@@ -72,7 +72,7 @@ for path in sceneFixes/*; do
         PREV="${path%%/*}"
         NEXT="${path#*/}"
         DEST="${PREV}_enc/${NEXT}"
-        ./script2bin tmp "$DEST" --enc-shift-jis > /dev/null
+        ./script2bin --change-string-sizes tmp "$DEST" --enc-shift-jis > /dev/null
         # echo $path
     fi
 done
