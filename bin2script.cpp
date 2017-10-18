@@ -12,6 +12,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <map>
 
 
 uint16_t read16(std::ifstream& input) {
@@ -103,6 +104,8 @@ inline bool isOpCode( uint16_t code )
 	return (0x8000 <= code && code <= 0x8182);
 }
 
+std::map<uint32_t, uint32_t> labelMap;
+
 void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 {
 	fh.seekg( segHead.offset );
@@ -118,6 +121,9 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 	std::cout << "Size : 0x" << std::hex << (int)segHead.size << std::dec << std::endl;
 
 	char *pSeg = segment, *pEnd = segment + size;
+	bool hasJump = false;
+	GENERIC_ARG arg;
+	uint32_t labelIdx = 0;
 
 	while ( pSeg < (pEnd-1) ) {
 
@@ -139,9 +145,18 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			// return;
 		}
 
+		if ( hasJump ) {
+			std::cout << " / label" << labelIdx;
+			labelMap[ (unsigned int)((pSeg - segment) + arg.iVal) ] = labelIdx++;
+		}
+
 		std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
 			<< (int)(pSeg - segment) << ": "
 			<< std::dec;
+
+		if ( labelMap.count( (unsigned int)(pSeg - segment) ) ) {
+			std::cout << "label" << labelMap[ (unsigned int)(pSeg - segment) ] << ": ";
+		}
 
 		uint32_t opcode_idx = opcode - OPCODE_exit;
 		std::string opcode_name;
@@ -168,11 +183,28 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 		bool is_opcode = false;
 		uint16_t nargs = 0;
 
+		switch (opcode) {
+		case OPCODE_if:
+		case OPCODE_elseIf:
+		case OPCODE_else:
+		case OPCODE_break:
+		case OPCODE_while:
+		case OPCODE_case:
+		case OPCODE_default:
+		case OPCODE_Execute:
+			hasJump = true;
+			break;
+
+		default:
+			hasJump = false;
+		};
+
+
 		while ( !is_opcode && (pSeg < (pEnd-1)) ) {
 
 			const char *pArg = pSeg;
-			GENERIC_ARG arg = *((GENERIC_ARG*)pSeg);
-			DataTag tag = (DataTag)arg.tag;
+			GENERIC_ARG cur = *((GENERIC_ARG*)pSeg);
+			DataTag tag = (DataTag)cur.tag;
 			is_opcode = isOpCode( tag );
 			uint32_t tag_val;
 
@@ -192,6 +224,8 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				// std::cout << " ";
 			}
+
+			arg = cur;
 
 			// std::cerr << "Switch ARG" << std::endl;
 

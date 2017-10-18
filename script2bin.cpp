@@ -172,6 +172,8 @@ void print_hex(uint8_t *data, uint32_t size)
 uint32_t countSegments(std::list<std::string>& lines);
 
 std::map<std::string,uint16_t> opCodeMap;
+std::vector<std::pair<uint32_t, std::string>> jmpList;
+std::map<std::string, uint32_t> labelMap;
 
 int main(int argc, char *argv[])
 {
@@ -505,6 +507,32 @@ bool parseHex( std::vector<uint8_t>& values, std::string data )
 	return true;
 }
 
+bool hasJump(uint32_t opcode)
+{
+	bool hasJump = false;
+
+	switch (opcode) {
+	case OPCODE_if:
+	case OPCODE_elseIf:
+	case OPCODE_else:
+	case OPCODE_break:
+	case OPCODE_while:
+	case OPCODE_case:
+	case OPCODE_default:
+	case OPCODE_Execute:
+		hasJump = true;
+		break;
+
+	default:
+		hasJump = false;
+	};
+
+	return hasJump;
+}
+
+uint32_t lastJump = 0;
+std::string labelName;
+
 void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 {
 	boost::trim(arg);
@@ -577,6 +605,18 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 
 		write16( fh, INT_TAG );
 		write32( fh, value );
+
+		if ( hasJump( opcode ) ) {
+
+			int labelPos = content.find("/");
+
+			if ( labelPos != std::string::npos ) {
+				labelName = content.substr(labelPos+1);
+				boost::trim(labelName);
+				lastJump = value;
+			}
+		}
+
 		break;
 	}
 
@@ -667,16 +707,35 @@ void write_segment(
 	nextEmptyLine(it, end);
 
 	bool done = false;
+	uint16_t opcode = 0;
 
 	while ( ++it != end ) {
 
 		line = *it;
 
 		std::string codeLine = line;
-		std::size_t found = line.find(":");
+		std::size_t first;
+		std::size_t found;
 
-		if ( found != std::string::npos )
-			codeLine = line.substr(found + 1);
+		do {
+			first = codeLine.find(",");
+			found = codeLine.find(":");
+
+			if ( found != std::string::npos && found < first ) {
+				std::string label = codeLine.substr(0, found);
+				boost::trim(label);
+
+				if ( label.substr(0, 2) != "0x" ) {
+					labelMap[ label ] = fh.tellp();
+				}
+
+				codeLine = codeLine.substr(found + 1);
+			}
+			else {
+				break;
+			}
+
+		} while ( true );
 
 		boost::trim(codeLine);
 
@@ -684,11 +743,15 @@ void write_segment(
 			break;
 		}
 
+		if ( hasJump(opcode) ) {
+			jmpList.push_back( std::make_pair( (uint32_t)fh.tellp(), labelName ) );
+		}
+
 		std::vector<std::string> elems;
 		boost::split(elems, codeLine, boost::is_any_of(","));
 
 		std::string& opCodeName = elems[0];
-		uint16_t opcode = opCodeMap[ opCodeName ];
+		opcode = opCodeMap[ opCodeName ];
 		// std::cout << "OPCODE : " << opCodeName << std::endl;
 
 		write16( fh, opcode );
@@ -705,5 +768,19 @@ void write_segment(
 	}
 
 	segHead.size = (int)fh.tellp() - (int)segHead.offset;
+	const uint32_t pos = fh.tellp();
+
+	for ( auto &jmp : jmpList ) {
+
+		fh.seekp( jmp.first - 4 );
+		write32( fh, labelMap[ jmp.second ] - jmp.first );
+		// std::cerr << "setting jmp @offset 0x" << std::hex << (jmp.first-4 - segHead.offset)
+			// << " to @0x" << (int)(labelMap[ jmp.second ] - segHead.offset) << std::dec << std::endl;
+	}
+
+	fh.seekp(pos);
+
+	jmpList.clear();
+	labelMap.clear();
 }
 
