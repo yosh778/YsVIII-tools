@@ -131,13 +131,13 @@ Credits to [weaknespase](https://github.com/weaknespase) for the [file format re
 
 ### Assembler
 
-Usage : `script2bin <script> <output> (--enc-shift-jis) (--dec-shift-jis) (--change-string-sizes)`
+Usage : `script2bin <script> <output> (--enc-shift-jis) (--dec-shift-jis) (--preserve-string-sizes)`
 
 Converts a script back into bytecode.
 
 - Add `--enc-shift-jis` to convert game text strings from utf8 back into shift-jis.
 - Add `--dec-shift-jis` to convert game text strings from shift-jis into utf8 (experiemental)
-- If you specify `--change-string-sizes`, `--enc-shift-jis` & `--dec-shift-jis` options will not attempt to preserve the original string sizes after convertion (jumps will be updated but sometimes rare bugs still seem to occur)
+- If you specify `--preserve-string-sizes`, `--enc-shift-jis` & `--dec-shift-jis` options will attempt to preserve the original string sizes after conversion (by adding spaces or removing last characters)
 
 ### RPN arithmetics
 
