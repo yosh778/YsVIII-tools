@@ -504,9 +504,14 @@ bool parseHex( std::vector<uint8_t>& values, std::string data )
 
 			if ( iBuf >= 2 ) {
 				buf[3] = 0;
-				int value = std::stoul(buf, nullptr, 16);
-				values.push_back( value );
 
+				try {
+					int value = std::stoul(buf, nullptr, 16);
+					values.push_back( value );
+				}
+				catch (...) {
+					std::cerr << "ERROR : failed to parse '" << data << "' as hex" << std::endl;
+				}
 				// std::cerr << "Added " << value << std::endl;
 
 				iBuf = 0;

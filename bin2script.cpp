@@ -191,7 +191,8 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 						newLine = relOffset + label + oldLine.substr( begPos+2 );
 					}
 					else {
-						newLine = label + oldLine;
+						size_t begPos = oldLine.find("\n");
+						newLine = oldLine.substr(0, begPos+1) + label + oldLine.substr(begPos+1);
 					}
 
 					lines[ labelOffset ] = newLine;
@@ -321,8 +322,9 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg += len;
 
 				// TODO : find unambiguous string delimiters
-				ss << data << "\""; }
+				ss << data << "\"";
 				break;
+			}
 
 			case POPUP_TAG: {
 				// ss << ", popup (" << arg.uVal << ":";
@@ -381,9 +383,9 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				print_hex((uint8_t*)pSeg, count, ss);
 
-				pSeg += count; }
+				pSeg += count;
 				break;
-
+			}
 
 			default:
 				std::cerr << std::endl
