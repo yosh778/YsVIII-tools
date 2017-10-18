@@ -531,6 +531,7 @@ bool hasJump(uint32_t opcode)
 	case OPCODE_case:
 	case OPCODE_default:
 	case OPCODE_Execute:
+	case OPCODE_8085:
 		hasJump = true;
 		break;
 
@@ -756,7 +757,7 @@ void write_segment(
 		}
 
 		if ( hasJump(opcode) ) {
-			jmpList.push_back( std::make_pair( (uint32_t)fh.tellp(), labelName ) );
+			jmpList.push_back( std::make_pair( (int)fh.tellp(), labelName ) );
 		}
 
 		std::vector<std::string> elems;
@@ -787,7 +788,9 @@ void write_segment(
 		fh.seekp( jmp.first - 4 );
 		write32( fh, labelMap[ jmp.second ] - jmp.first );
 		// std::cerr << "setting jmp @offset 0x" << std::hex << (jmp.first-4 - segHead.offset)
-		// 	<< " to @0x" << (int)(labelMap[ jmp.second ] - segHead.offset) << std::dec << std::endl;
+		// 	<< " to @0x" << (int)(labelMap[ jmp.second ] - segHead.offset) << std::dec
+		// 	<< std::endl;
+			// << " ie #" << (int)(labelMap[ jmp.second ] - segHead.offset) << std::endl;
 	}
 
 	fh.seekp(pos);

@@ -47,10 +47,10 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 
 void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead );
 
-void print_hex(uint8_t *data, uint32_t size)
+void print_hex(uint8_t *data, uint32_t size, std::stringstream &stream)
 {
 	for (uint32_t i = 0; i < size; ++i) {
-		std::cout << " " << std::hex << std::setfill('0') << std::setw(2)
+		stream << " " << std::hex << std::setfill('0') << std::setw(2)
 			<< (int)data[i] << std::dec;
 	}
 }
@@ -142,7 +142,12 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 	GENERIC_ARG arg;
 	uint32_t labelIdx = 0;
 
+	std::stringstream ss;
+	std::map<uint32_t, std::string> lines;
+
 	while ( pSeg < (pEnd-1) ) {
+
+		const uint32_t lineOffset = (uint32_t)(pSeg - segment);
 
 		OpCode opcode = (OpCode)*((uint16_t*)pSeg);
 
@@ -168,19 +173,43 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 			if ( labelMap.count( labelOffset ) <= 0 ) {
 				index = labelIdx;
-				labelMap[ labelOffset ] = labelIdx++;
+				labelMap[ labelOffset ] = labelIdx;
+
+				if ( arg.iVal < 0 ) {
+
+					if ( labelMap.count( labelOffset ) <= 0 ) {
+						std::cerr << "ERROR : invalid label reference" << std::endl;
+					}
+
+					std::string oldLine = lines[ labelOffset ];
+					std::string label = "label" + std::to_string(labelIdx) + ": ";
+					std::string newLine;
+
+					if ( !minimize ) {
+						size_t begPos = oldLine.find(":");
+						std::string relOffset = oldLine.substr( 0, begPos+2 );
+						newLine = relOffset + label + oldLine.substr( begPos+2 );
+					}
+					else {
+						newLine = label + oldLine;
+					}
+
+					lines[ labelOffset ] = newLine;
+				}
+
+				labelIdx++;
 			}
 
 			else
 				index = labelMap[ labelOffset ];
 
-			std::cout << " / label" << index;
+			ss << " / label" << index;
 		}
 
-		std::cout << std::endl;
+		ss << std::endl;
 
 		if ( !minimize ) {
-			std::cout << "0x" << std::hex << std::setfill('0') << std::setw(4)
+			ss << "0x" << std::hex << std::setfill('0') << std::setw(4)
 				<< (int)(pSeg - segment) << ": "
 				<< std::dec;
 		}
@@ -188,7 +217,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 		const uint32_t curOffset = (unsigned int)(pSeg - segment);
 
 		if ( labelMap.count( curOffset ) ) {
-			std::cout << "label" << labelMap[ curOffset ] << ": ";
+			ss << "label" << labelMap[ curOffset ] << ": ";
 		}
 
 		uint32_t opcode_idx = opcode - OPCODE_exit;
@@ -196,10 +225,10 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 		if ( opcode_idx < sizeof(opCodeNames)/sizeof(char*) ) {
 			opcode_name = opCodeNames[ opcode_idx ];
-			std::cout << opcode_name;
+			ss << opcode_name;
 		}
 		else {
-			std::cout << std::hex << "0x" << opcode << std::dec;
+			ss << std::hex << "0x" << opcode << std::dec;
 		}
 
 		// std::cerr << std::endl << "pSeg = " << std::hex << (int)pSeg << std::dec;
@@ -209,7 +238,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 		// std::cerr << std::endl << "opcode = " << std::hex << (int)opcode << std::dec;
 
 		// if ( opcode == OPCODE_exit ) {
-		// 	std::cout << std::endl;
+		// 	ss << std::endl;
 		// 	return;
 		// }
 
@@ -225,6 +254,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 		case OPCODE_case:
 		case OPCODE_default:
 		case OPCODE_Execute:
+		case OPCODE_8085:
 			hasJump = true;
 			break;
 
@@ -255,7 +285,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				pSeg += sizeof(GENERIC_ARG);
 
-				// std::cout << " ";
+				// ss << " ";
 			}
 
 			arg = cur;
@@ -265,23 +295,23 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 			switch ( tag ) {
 
 			case INT_TAG:
-				std::cout << ", #" << arg.iVal;
+				ss << ", #" << arg.iVal;
 
 				if ( !minimize ) {
-					std::cout << " (@ 0x" << std::hex << std::setfill('0') << std::setw(4)
-							<< ((pSeg - segment) + arg.iVal) << std::dec << ")";
+					ss << " (@ 0x" << std::hex << std::setfill('0') << std::setw(4)
+							<< ((int)(pSeg - segment) + (int)arg.iVal) << std::dec << ")";
 				}
 				break;
 
 			case FLOAT_TAG:
-				// std::cout << ", f" << arg.fVal;
-				std::cout << ", .0x" << std::hex << arg.uVal << std::dec;
-				std::cout << " (~ " << arg.fVal << ")";
+				// ss << ", f" << arg.fVal;
+				ss << ", .0x" << std::hex << arg.uVal << std::dec;
+				ss << " (~ " << arg.fVal << ")";
 				break;
 
 			case STRING_TAG: {
-				std::cout << ", s\"";
-				// std::cout << ", "<<arg.uVal<<"\"";
+				ss << ", s\"";
+				// ss << ", "<<arg.uVal<<"\"";
 
 				uint32_t len = arg.uVal;
 				char data[len+1];
@@ -291,12 +321,12 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg += len;
 
 				// TODO : find unambiguous string delimiters
-				std::cout << data << "\""; }
+				ss << data << "\""; }
 				break;
 
 			case POPUP_TAG: {
-				// std::cout << ", popup (" << arg.uVal << ":";
-				std::cout << ", p";
+				// ss << ", popup (" << arg.uVal << ":";
+				ss << ", p";
 
 				POPUP_ARG popup = *(POPUP_ARG*)pArg;
 				uint32_t nLines = popup.nLines;
@@ -309,11 +339,11 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 					args[i] = *((uint32_t*)pSeg);
 					pSeg += sizeof(uint32_t);
 
-					// std::cout << " " << args[i] << " ;";
+					// ss << " " << args[i] << " ;";
 				}
 
-				// std::cout << " \"";
-				std::cout << "\"";
+				// ss << " \"";
+				ss << "\"";
 
 				char data[len+1];
 
@@ -322,20 +352,20 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg += len;
 
 				// TODO : find unambiguous string delimiters
-				std::cout << data << "\"";
-				std::cout << " (";
+				ss << data << "\"";
+				ss << " (";
 
 				for (uint32_t i = 0; i < nLines; i++) {
-					std::cout << " " << args[i];
+					ss << " " << args[i];
 				}
-				std::cout << " )";
+				ss << " )";
 
-				// std::cout << data << "\" )";
+				// ss << data << "\" )";
 				break;
 			}
 
 			case UNK0_TAG: {
-				std::cout << ", o";
+				ss << ", o";
 
 				uint32_t count = arg.uVal;
 
@@ -345,11 +375,11 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 
 				if ( count > (pEnd - pSeg) ) {
 					std::cerr << std::endl << "FATAL ERROR, segment aborted";
-					std::cout << std::endl << "FATAL ERROR, segment aborted";
+					ss << std::endl << "FATAL ERROR, segment aborted";
 					return;
 				}
 
-				print_hex((uint8_t*)pSeg, count);
+				print_hex((uint8_t*)pSeg, count, ss);
 
 				pSeg += count; }
 				break;
@@ -365,12 +395,19 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				pSeg = (char*)pArg;
 				break;
 
-				// std::cout << ", " << std::hex << "0x" << (int)tag << " : 0x" << arg.uVal << std::dec;
+				// ss << ", " << std::hex << "0x" << (int)tag << " : 0x" << arg.uVal << std::dec;
 				// break;
 			}
 		}
+
+		lines[ lineOffset ] = ss.str();
+		ss.clear();
+		ss.str("");
 	}
 
+	for ( auto &line : lines ) {
+		std::cout << line.second;
+	}
 
 	std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
 		<< (int)(pSeg - segment) << ": "
