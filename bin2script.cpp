@@ -335,5 +335,16 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 		}
 	}
 
+
+	std::cout << std::endl << "0x" << std::hex << std::setfill('0') << std::setw(4)
+		<< (int)(pSeg - segment) << ": "
+		<< std::dec;
+
+	if ( labelMap.count( (unsigned int)(pSeg - segment) ) ) {
+		std::cout << "label" << labelMap[ (unsigned int)(pSeg - segment) ] << ": ";
+	}
+
+	labelMap.clear();
+
 	std::cout << std::endl;
 }

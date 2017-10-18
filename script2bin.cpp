@@ -740,6 +740,7 @@ void write_segment(
 		boost::trim(codeLine);
 
 		if ( codeLine.size() < 1 ) {
+			++it;
 			break;
 		}
 
