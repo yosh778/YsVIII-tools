@@ -69,6 +69,7 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 
 bool oShiftJis = false;
 bool iShiftJis = false;
+bool keepStringSizes = false;
 
 // Apply encoding fixes here
 void convertText(std::string& text)
@@ -114,6 +115,11 @@ void convertText(std::string& text)
 	}
 
 	end:
+
+	if ( !keepStringSizes ) {
+		text = data;
+		return;
+	}
 
 	int oSize = data.size();
 	int iSize = text.size();
