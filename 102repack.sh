@@ -51,7 +51,7 @@ cp -f custom/mp1204.bin $PATCH_102_FIX_DIR/script/mp1204.bin
 
 
  # cp -f custom/item.bin $DAT_FIX_DIR
- # cp -f custom/talk.bin $DAT_FIX_DIR
+cp -f custom/talk.bin $DAT_FIX_DIR
 
 # mkdir -p tbb
 # ./swap.sh $TBB_LIST $DAT_ENG_DIR tbb > /dev/null

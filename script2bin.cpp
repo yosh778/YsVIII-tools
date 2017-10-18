@@ -69,7 +69,7 @@ uint32_t checksum(const char* in, const uint32_t length, int last = 0){
 
 bool oShiftJis = false;
 bool iShiftJis = false;
-bool keepStringSizes = false;
+bool keepStringSizes = true;
 
 // Apply encoding fixes here
 void convertText(std::string& text)
@@ -200,9 +200,9 @@ int main(int argc, char *argv[])
 			iShiftJis = true;
 		}
 
-		else if ( arg == "--preserve-string-sizes" ) {
-			std::cout << "Preserving string sizes" << std::endl;
-			keepStringSizes = true;
+		else if ( arg == "--change-string-sizes" ) {
+			std::cout << "Allowing string size modification" << std::endl;
+			keepStringSizes = false;
 		}
 
 		else if ( iPath.size() < 1 ) {
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 
 	if ( argc < 3 || iPath.size() < 1 || oPath.size() < 1 ) {
 		std::cerr << "Usage : " << argv[0]
-			<< " <script> <output> (--dec-shift-jis) (--enc-shift-jis) (--preserve-string-sizes)" << std::endl;
+			<< " <script> <output> (--dec-shift-jis) (--enc-shift-jis) (--change-string-sizes)" << std::endl;
 		return -1;
 	}
 
