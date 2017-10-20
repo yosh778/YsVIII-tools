@@ -544,7 +544,7 @@ bool hasJump(uint32_t opcode)
 		break;
 
 	default:
-		hasJump = false;
+		NULL;
 	};
 
 	return hasJump;
@@ -764,10 +764,6 @@ void write_segment(
 			break;
 		}
 
-		if ( hasJump(opcode) ) {
-			jmpList.push_back( std::make_pair( (int)fh.tellp(), labelName ) );
-		}
-
 		std::vector<std::string> elems;
 		boost::split(elems, codeLine, boost::is_any_of(","));
 
@@ -786,6 +782,9 @@ void write_segment(
 			write_arg( fh, arg, opcode );
 		}
 
+		if ( hasJump(opcode) ) {
+			jmpList.push_back( std::make_pair( (int)fh.tellp(), labelName ) );
+		}
 	}
 
 	segHead.size = (int)fh.tellp() - (int)segHead.offset;

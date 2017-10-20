@@ -137,7 +137,7 @@ enum OpCode {
   OPCODE_else = 0x8082,
   OPCODE_switch = 0x8083,
   OPCODE_while = 0x8084,
-  OPCODE_8085 = 0x8085, // return ?
+  OPCODE_8085 = 0x8085, // goto / jump ?
   OPCODE_break = 0x8086,
   OPCODE_8087 = 0x8087, // end if ?
   OPCODE_case = 0x8088,

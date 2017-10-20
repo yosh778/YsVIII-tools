@@ -145,9 +145,59 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 	std::stringstream ss;
 	std::map<uint32_t, std::string> lines;
 
-	while ( pSeg < (pEnd-1) ) {
+	while ( true ) {
 
 		const uint32_t lineOffset = (uint32_t)(pSeg - segment);
+
+		if ( hasJump ) {
+			uint32_t index = 0;
+			const uint32_t labelOffset = (unsigned int)((pSeg - segment) + arg.iVal);
+
+			if ( labelMap.count( labelOffset ) <= 0 ) {
+				index = labelIdx;
+				labelMap[ labelOffset ] = labelIdx;
+
+				if ( arg.iVal < 0 ) {
+
+					if ( lines.count( labelOffset ) > 0 ) {
+
+						std::string oldLine = lines[ labelOffset ];
+						std::string label = "label" + std::to_string(labelIdx) + ": ";
+						std::string newLine;
+
+						if ( !minimize ) {
+							size_t begPos = oldLine.find(":");
+							std::string relOffset = oldLine.substr( 0, begPos+2 );
+							newLine = relOffset + label + oldLine.substr( begPos+2 );
+						}
+						else {
+							size_t begPos = oldLine.find("\n");
+							newLine = oldLine.substr(0, begPos+1) + label + oldLine.substr(begPos+1);
+						}
+
+						lines[ labelOffset ] = newLine;
+					}
+
+					else {
+						std::cerr << "ERROR : invalid label reference to 0x" << std::hex << labelOffset << std::dec << std::endl;
+					}
+				}
+
+				labelIdx++;
+			}
+
+			else
+				index = labelMap[ labelOffset ];
+
+			ss << " / label" << index;
+		}
+
+		if ( pSeg >= (pEnd-1) ) {
+			lines[ lineOffset ] = ss.str();
+			break;
+		}
+
+		ss << std::endl;
 
 		OpCode opcode = (OpCode)*((uint16_t*)pSeg);
 
@@ -166,48 +216,6 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				<< std::dec;
 			// return;
 		}
-
-		if ( hasJump ) {
-			uint32_t index = 0;
-			const uint32_t labelOffset = (unsigned int)((pSeg - segment) + arg.iVal);
-
-			if ( labelMap.count( labelOffset ) <= 0 ) {
-				index = labelIdx;
-				labelMap[ labelOffset ] = labelIdx;
-
-				if ( arg.iVal < 0 ) {
-
-					if ( labelMap.count( labelOffset ) <= 0 ) {
-						std::cerr << "ERROR : invalid label reference" << std::endl;
-					}
-
-					std::string oldLine = lines[ labelOffset ];
-					std::string label = "label" + std::to_string(labelIdx) + ": ";
-					std::string newLine;
-
-					if ( !minimize ) {
-						size_t begPos = oldLine.find(":");
-						std::string relOffset = oldLine.substr( 0, begPos+2 );
-						newLine = relOffset + label + oldLine.substr( begPos+2 );
-					}
-					else {
-						size_t begPos = oldLine.find("\n");
-						newLine = oldLine.substr(0, begPos+1) + label + oldLine.substr(begPos+1);
-					}
-
-					lines[ labelOffset ] = newLine;
-				}
-
-				labelIdx++;
-			}
-
-			else
-				index = labelMap[ labelOffset ];
-
-			ss << " / label" << index;
-		}
-
-		ss << std::endl;
 
 		if ( !minimize ) {
 			ss << "0x" << std::hex << std::setfill('0') << std::setw(4)
