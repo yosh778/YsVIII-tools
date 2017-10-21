@@ -42,7 +42,7 @@ cp -f custom/mp1103.bin $PATCH_102_FIX_DIR/script/mp1103.bin
 
 # ./script2bin custom/item_test.ys custom/item.bin --enc-shift-jis > /dev/null
 # ./script2bin custom/talk.ys custom/talk.bin --enc-shift-jis > /dev/null
-./script2bin custom/mp1204_credits.ys custom/mp1204.bin --enc-shift-jis --change-string-sizes > /dev/null
+./script2bin custom/mp1204_credits.ys custom/mp1204.bin --enc-shift-jis > /dev/null
 #./script2bin custom/talk_test.ys custom/talk.bin > /dev/null
 
 cp -f custom/mp1204.bin $PATCH_102_FIX_DIR/script/mp1204.bin

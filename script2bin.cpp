@@ -392,7 +392,7 @@ bool isInteger(std::string line)
 bool parseNextArg( std::string& arg, std::string& args )
 {
 	uint32_t beg = args.size();
-	uint32_t size = 1;
+	uint32_t size = 0;
 
 	// Look for arg beginning
 	for ( uint32_t i = 0; i < args.size(); i++ ) {
@@ -414,21 +414,21 @@ bool parseNextArg( std::string& arg, std::string& args )
 	char elem = args[beg];
 
 	// Look for arg end, ignore string contents
-	for ( uint32_t i = beg+1; i < args.size(); i++ ) {
+	for ( uint32_t i = beg; i < args.size(); i++ ) {
 
-		beforeLast = last;
-		last = elem;
 		elem = args[i];
 
 		if ( elem == '"' ) {
 
 			if ( !inString ) {
 
-				if ( last == ' ' || last == ',' || last == 's' || last == 'p' ) {
+				if ( last == ' ' || last == ',' || !last
+					 || last == 's' || last == 'p' ) {
+
 					inString = true;
 				}
 			}
-			else if ( last != '\\' && ((last != 0x77 && last != 0x78) || beforeLast != 0x81) ) {
+			else if ( last != '\\' ) {
 
 				for ( uint32_t j = i+1; j < args.size(); j++ ) {
 
@@ -452,6 +452,9 @@ bool parseNextArg( std::string& arg, std::string& args )
 		}
 
 		size++;
+
+		beforeLast = last;
+		last = elem;
 	}
 
 	// if ( inString ) {
