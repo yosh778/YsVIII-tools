@@ -27,7 +27,8 @@ Then, you must change the quote system used here. Indeed, english uses quotes li
 - Now for the japanese version only, unpack & then repack uncommented files from tbb2shift.list in 1stload.dat using TBB tools with `--enc shift-jis`, & place these in your patched 1stload folder (this should fix encoding issues)
 - Finally, repack the fixed 1stload.dat & pkg_menu.xai files using the `dat` & `xai` tools, use it as system/1stload.dat & flash/pkg_menu.xai in 102 & then repack 102 using the XAST Packer.
 Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
-- Finished, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
+- Finished for patch 1.02, just use the generated patch102_fixed.xai file as patch102.xai in your japanese game folder & have fun.
+- Some other steps are required to fix some encoding issues in scenes for instance, for that you can use the `encScripts.sh` script. Some other smalls files need encoding fixes (details) &, also some files have $n separators which must be converted to spaces instead
 - Additionally, you can use the eboot patcher below to fix some details from the eboot itself
 
 ## Work left undone
