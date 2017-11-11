@@ -31,14 +31,6 @@ Something like `./xai patch102_fix patch102_fixed.xai patch102_untouched.xai`
 - Some other steps are required to fix some encoding issues in scenes for instance, for that you can use the `encScripts.sh` script. Some other smalls files need encoding fixes (details) &, also some files have $n separators which must be converted to spaces instead
 - Additionally, you can use the eboot patcher below to fix some details from the eboot itself
 
-## Work left undone
-
-### Secondary
-
-- Fix encoding issues
-- Hack into pl_const.plt to improve icon positions if possible
-- Translate trophies ? (risky & not doable yet it seems)
-
 ## Eboot patcher
 
 Usage : `python3 patchEboot.py <eboot>`
