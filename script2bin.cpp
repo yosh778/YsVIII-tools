@@ -740,6 +740,12 @@ void write_segment(
 		std::size_t first;
 		std::size_t found;
 
+		boost::trim(line);
+
+		if ( line.size() > 1 && line[0] == '#' ) {
+			continue;
+		}
+
 		do {
 			first = codeLine.find(",");
 			found = codeLine.find(":");

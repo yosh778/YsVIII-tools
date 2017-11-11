@@ -152,8 +152,10 @@ int main(int argc, char *argv[])
         uint32_t offset = fileOffsets[i];
         uint32_t size = fileSizes[i];
 
-        if ( !offset || !size )
+        if ( !offset || !size ) {
+        	std::cout << "Skipping empty slot" << std::endl;
             continue;
+        }
 
         nFoundEntries++;
 

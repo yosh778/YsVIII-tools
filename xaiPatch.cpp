@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 
 		if ( totalRead > fileSize ) {
 			wSize -= totalRead - fileSize;
-			std::cerr << "ERROR : Input file size differs !" << std::endl;
+			std::cerr << "ERROR : Input file size differs ! Expected size : " << fileSize << std::endl;
 		}
 
 		if ( wSize > 0 ) {
