@@ -47,7 +47,7 @@ cp -f custom/mp1103.bin $PATCH_102_FIX_DIR/script/mp1103.bin
 #./script2bin custom/talk_test.ys custom/talk.bin > /dev/null
 
 cp -f custom/mp1204.bin $PATCH_102_FIX_DIR/script/mp1204.bin
-cp -f custom/mp1101.bin $PATCH_102_FIX_DIR/script/mp1101.bin
+#cp -f custom/mp1101.bin $PATCH_102_FIX_DIR/script/mp1101.bin
 
 #cp -f custom/item_fix.bin custom/item.bin
 
