@@ -26,7 +26,7 @@ enum DataTag {
     INT_TAG = 0x82DD,
     FLOAT_TAG = 0x82DE,
     STRING_TAG = 0x82DF,
-    UNK0_TAG = 0x82E0,
+    VCALC_TAG = 0x82E0,
 
     POPUP_TAG = 0x2020,
 };
@@ -60,7 +60,7 @@ struct __attribute__((__packed__)) STRING_ARG {
   // char[cch] text;
 };
 
-struct __attribute__((__packed__)) UNK0_ARG {
+struct __attribute__((__packed__)) VCALC_ARG {
   uint16_t        tag_82E0;
   uint32_t        length;
   // uint8_t[length] value;

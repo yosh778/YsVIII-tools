@@ -656,7 +656,7 @@ void write_arg( std::fstream& fh, std::string arg, uint16_t opcode )
 		std::vector<uint8_t> values(0);
 		parseHex( values, content.substr(1) );
 
-		write16( fh, UNK0_TAG );
+		write16( fh, VCALC_TAG );
 		write32( fh, values.size() );
 		fh.write( (char*)values.data(), values.size() );
 		break;

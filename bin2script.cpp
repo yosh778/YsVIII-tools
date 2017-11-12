@@ -3,6 +3,7 @@
 #include "sceneTool.hh"
 #include "sceneOpCodes.hh"
 #include "sceneOpCodeNames.hh"
+#include "vcalcOpCodes.hh"
 
 #include <string>
 #include <iostream>
@@ -12,6 +13,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <stack>
 #include <map>
 
 
@@ -55,11 +57,233 @@ void print_hex(uint8_t *data, uint32_t size, std::stringstream &stream)
 	}
 }
 
+bool print_vcalc(uint8_t *data, uint32_t size, std::string &oString)
+{
+	bool hasNop = false;
+	bool done = false;
+	bool success = true;
+	uint8_t *end = data + size;
+	uint8_t *pCur = data;
+	uint32_t vLast = 0;
+	bool isIntLast = true;
+	uint8_t nbVals = 0;
+	std::string sCalc, sLast, sVal;
+	std::stack<std::string> vStack;
+
+	while ( pCur < end ) {
+
+		if ( done )
+			return false;
+
+		uint16_t vcalcOp = *(uint16_t*)pCur;
+		pCur += 2;
+
+		if ( vStack.size() > 0 )
+			sVal = vStack.top();
+
+		hasNop = false;
+
+		switch ( vcalcOp ) {
+		case VCODE_NEQ:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " != " + sVal + ")";
+			break;
+
+		case VCODE_NOT:
+			vStack.pop();
+			sVal = "!" + sVal + "";
+			break;
+
+		case VCODE_MUL:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " * " + sVal + ")";
+			break;
+
+		case VCODE_DIV:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " / " + sVal + ")";
+			break;
+
+		case VCODE_IDIV:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " // " + sVal + ")";
+			break;
+
+		case VCODE_ADD:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " + " + sVal + ")";
+			break;
+
+		case VCODE_SUB:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " - " + sVal + ")";
+			break;
+
+		case VCODE_SRL:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " >> " + sVal + ")";
+			break;
+
+		case VCODE_GE:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " >= " + sVal + ")";
+			break;
+
+		case VCODE_GT:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " > " + sVal + ")";
+			break;
+
+		case VCODE_SLL:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " << " + sVal + ")";
+			break;
+
+		case VCODE_LE:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " <= " + sVal + ")";
+			break;
+
+		case VCODE_LT:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " < " + sVal + ")";
+			break;
+
+		case VCODE_EQ:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " == " + sVal + ")";
+			break;
+
+		case VCODE_AND:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " && " + sVal + ")";
+			break;
+
+		case VCODE_BAND:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " & " + sVal + ")";
+			break;
+
+		case VCODE_OR:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " || " + sVal + ")";
+			break;
+
+		case VCODE_BOR:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " | " + sVal + ")";
+			break;
+
+		case VCODE_BNOT:
+			vStack.pop();
+			sVal = "~" + sVal + "";
+			break;
+
+		case VCODE_XOR:
+			vStack.pop(); sLast = vStack.top(); vStack.pop();
+			sVal = "(" + sLast + " ^ " + sVal + ")";
+			break;
+
+		case VCODE_LDINT: {
+			vLast = *(uint32_t*)pCur;
+			pCur += 4;
+
+			sVal = std::to_string(vLast);
+			break;
+		}
+
+		case VCODE_LDFLT: {
+			vLast = *(uint32_t*)pCur;
+			float value = *(float*)pCur;
+			pCur += 4;
+
+			sVal = std::to_string(value);
+			break;
+		}
+
+		case VCODE_END:
+			hasNop = true;
+			done = true;
+			break;
+
+		case VCODE_LDVAR: {
+			vStack.pop();
+			sVal = std::string(isIntLast ? "iVar" : "fVar") + "[" + std::to_string(vLast) + "]";
+			break;
+		}
+
+		// Don't handle nops
+		// case VCODE_NOP:
+		// 	hasNop = true;
+		// 	break;
+
+		case VCODE_ABS:
+			vStack.pop();
+			sVal = "|" + sVal + "|";
+			break;
+
+		case VCODE_F2I:
+			vStack.pop();
+			sVal = "(int)" + sVal;
+			break;
+
+		case VCODE_I2F:
+			vStack.pop();
+			sVal = "(float)" + sVal;
+			break;
+
+		case VCODE_RAND:
+			sVal = "RAND";
+			break;
+
+		case VCODE_FRAND:
+			sVal = "FRAND";
+			break;
+
+		case VCODE_NEG:
+			vStack.pop();
+			sVal = "-" + sVal;
+			break;
+
+		default:
+			// std::cerr << "VCALC UNSUPPORTED OPERATION : 0x" << std::hex << vcalcOp << std::dec << std::endl;
+			// exit(1);
+			return false;
+		}
+
+		if ( !hasNop )
+			vStack.push(sVal);
+	}
+
+	if ( vStack.size() != 1 ) {
+		std::cerr << "VCALC STACK ERROR : " << vStack.size() << std::endl;
+		std::cerr << "TOP : " << vStack.top() << std::endl;
+		// vStack.pop();
+		// std::cerr << "TOP : " << vStack.top() << std::endl;
+		std::stringstream ss;
+		print_hex(data, size, ss);
+		std::cerr << ss.str() << std::endl;
+		// exit(1);
+		return false;
+	}
+
+	if ( done )
+		oString = vStack.top();
+
+	return done;
+}
+
+
 bool minimize = false;
+bool enable_vcalc = false;
 
 
 int main(int argc, char *argv[])
 {
+	// std::string ss;
+	// uint8_t tData[] = { 0x1A, 0, 1, 0, 0, 0, 0x1F, 0, 0x1D, 0 };
+	// print_vcalc( tData, sizeof(tData), ss ); std::cout << ss << std::endl;
+	//exit(0);
 	std::string iPath;
 
 	for ( int i = 1; i < argc; i++ ) {
@@ -71,6 +295,11 @@ int main(int argc, char *argv[])
 			minimize = true;
 		}
 
+		else if ( arg == "-t" ) {
+			std::cerr << "Enabling VCALC translation" << std::endl;
+			enable_vcalc = true;
+		}
+
 		else if ( iPath.size() < 1 ) {
 			iPath = arg;
 		}
@@ -78,7 +307,7 @@ int main(int argc, char *argv[])
 
 	if ( argc < 2 || iPath.size() < 1 ) {
 		std::cerr << "Usage : " << argv[0]
-			<< " <byteScript> (-m)" << std::endl;
+			<< " <byteScript> (-m Minimize, -t VCALC translation)" << std::endl;
 		return -1;
 	}
 
@@ -374,9 +603,7 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 				break;
 			}
 
-			case UNK0_TAG: {
-				ss << ", o";
-
+			case VCALC_TAG: {
 				uint32_t count = arg.uVal;
 
 				// if ( count != 8 ) {
@@ -389,7 +616,20 @@ void process_segment( std::ifstream& fh, SEGMENT_HEADER& segHead )
 					return;
 				}
 
-				print_hex((uint8_t*)pSeg, count, ss);
+				//print_hex((uint8_t*)pSeg, count, ss);
+				std::string sCalc;
+				bool success = false;
+
+				if ( enable_vcalc )
+					success = print_vcalc((uint8_t*)pSeg, count, sCalc);
+
+				if ( success )
+					ss << ", vCALC (" + sCalc + ")";
+
+				else {
+					ss << ", o";
+					print_hex((uint8_t*)pSeg, count, ss);
+				}
 
 				pSeg += count;
 				break;
