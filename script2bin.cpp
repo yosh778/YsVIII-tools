@@ -241,13 +241,13 @@ int main(int argc, char *argv[])
 	}
 
 	// Create output directory structure
-    boost::system::error_code returnedError;
-    boost::filesystem::path path( oPath );
-    //std::cout << path.parent_path() << std::endl;
+	boost::system::error_code returnedError;
+	boost::filesystem::path path( oPath );
+	//std::cout << path.parent_path() << std::endl;
 
-    boost::filesystem::create_directories(
-        path.parent_path(), returnedError
-    );
+	boost::filesystem::create_directories(
+		path.parent_path(), returnedError
+	);
 
 	std::fstream oFile( oPath.c_str(), std::ios_base::trunc | std::ios_base::in | std::ios_base::out | std::ios_base::binary );
 

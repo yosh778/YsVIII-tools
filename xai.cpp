@@ -108,11 +108,11 @@ int main(int argc, char *argv[])
 		filename.erase(0, 1);
 	  }
 
-	  // Skip any non-existing file
-	  if ( !exists( fullpath ) )
-		continue;
+	// Skip any non-existing file
+	if ( !exists( fullpath ) )
+	continue;
 
-	  if ( !is_dir ) {
+	if ( !is_dir ) {
 		pathsCount += filename.size() + 1;
 		fileData.filename = filename;
 		fileData.fullpath = fullpath;
