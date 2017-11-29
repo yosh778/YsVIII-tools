@@ -92,6 +92,12 @@ Usage : `unplt <input> <output>`
 
 Extracts all strings from an input PLT archive into the given output text file.
 
+### Packer
+
+Usage : `plt <input> <output>`
+
+Packs all strings from an input text file into the given output PLT archive.
+
 ## TBB
 
 Requires Node.js 6+ (8.5 recommended)
