@@ -3,7 +3,7 @@
 Unpacking & Packing tools for Ys VIII assets
 
 
-## How to translate Ys VIII (JP / CH) with it ?
+## How to translate Ys VIII with it ?
 
 Follow the guide [here](https://github.com/yosh778/YsVIII-tools/blob/master/Translation.md).
 
