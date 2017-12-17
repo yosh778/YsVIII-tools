@@ -126,5 +126,5 @@ You can also find here my first write-up about it : https://gist.github.com/yosh
 # Credits
 
 - Tony Blue for helping get the game on 3.60
-- [weaknespase](https://github.com/weaknespase) for the XAST checksum, TBB tools, script reversing, ... he's our trump card :)
+- [weaknespase](https://github.com/weaknespase) for the XAST checksum, TBB tools, script reversing, ... our trump card :)
 - [vampirexxxx](https://github.com/vampirexxxx) who is a big help in hacking the assets !
