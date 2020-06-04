@@ -144,13 +144,13 @@ int main(int argc, char *argv[])
 	}
 
 	uint8_t *buf = NULL;
-	uint32_t bufSize = 0;
+	uint64_t bufSize = 0;
 	uint32_t nFoundEntries = 0;
 
 	for ( i = 0; i < maxEntries; i++ ) {
 
-		uint32_t offset = fileOffsets[i];
-		uint32_t size = fileSizes[i];
+		uint64_t offset = fileOffsets[i];
+		uint64_t size = fileSizes[i];
 
 		if ( !offset || !size ) {
 			std::cout << "Skipping empty slot" << std::endl;
